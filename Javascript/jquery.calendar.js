@@ -1169,7 +1169,7 @@
         }
 
         function buildtempdayevent(sh, sm, eh, em, h, title, w, resize,thindex) {
-            var theme = thindex?tc(thindex):tc();
+            var theme = thindex !=undefined && thindex>=0 ?tc(thindex):tc();
             var newtemp = Tp(__SCOLLEVENTTEMP, {
                 bdcolor: theme[0],
                 bgcolor2: theme[0],

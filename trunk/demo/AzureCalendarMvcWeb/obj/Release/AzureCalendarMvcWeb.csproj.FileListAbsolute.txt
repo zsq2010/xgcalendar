@@ -1,0 +1,9 @@
+H:\Temp\Azure\AzureCalendarMvc\AzureCalendarMvcWeb\bin\AzureCalendarMvcWeb.dll
+H:\Temp\Azure\AzureCalendarMvc\AzureCalendarMvcWeb\bin\AzureCalendarMvcWeb.pdb
+H:\Temp\Azure\AzureCalendarMvc\AzureCalendarMvcWeb\obj\Release\ResolveAssemblyReference.cache
+H:\Temp\Azure\AzureCalendarMvc\AzureCalendarMvcWeb\obj\Release\AzureCalendarMvcWeb.dll
+H:\Temp\Azure\AzureCalendarMvc\AzureCalendarMvcWeb\obj\Release\AzureCalendarMvcWeb.pdb
+H:\Temp\Azure\AzureCalendarMvc\AzureCalendarMvcWeb\bin\System.Web.Abstractions.dll
+H:\Temp\Azure\AzureCalendarMvc\AzureCalendarMvcWeb\bin\System.Web.Mvc.dll
+H:\Temp\Azure\AzureCalendarMvc\AzureCalendarMvcWeb\bin\System.Web.Routing.dll
+H:\Temp\Azure\AzureCalendarMvc\AzureCalendarMvcWeb\bin\System.Web.Mvc.xml

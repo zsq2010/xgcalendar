@@ -1,6 +1,6 @@
 ﻿/*
- * XgCalendar v1.0.0
- * Base on jQuery 1.2.6+
+ * XgCalendar v1.0.1
+ * Base on jQuery 1.3+
  * http://xuanye.cnblogs.com/
  *
  * Copyright (c) 2009 Xuanye.wan
@@ -30,7 +30,7 @@
             onItemCreateHandler: false,
             onItemDeleteHandler: false,
             onWeekToDay: false,
-            quickAddHandler: false, //快速添加的拦截函数，该参数设置后quickAddUrl参数的设置将被忽略
+            quickAddHandler: false, //快速添加的拦截函数，该参数设置后quickAddUrl参数的设置将  v被忽略
             quickAddUrl: "", //快速添加日程Post Url 地址
             quickUpdateUrl: "",
             quickDeleteUrl: "", //快速删除日程的
@@ -43,7 +43,6 @@
             enableDrag: true,
             loadDateR: []
         };
-
         var eventDiv = $("#gridEvent");
         if (eventDiv.length == 0) {
             eventDiv = $("<div id='gridEvent' style='display:none;'></div>").appendTo(document.body);
@@ -960,7 +959,7 @@
                             }
                         }
                         else {
-                            responseData(data);
+                            responseData(data, data.start, data.end);
                             pushER(data.start, data.end);
                         }
                         if (option.onAfterRequestData && $.isFunction(option.onAfterRequestData)) {
@@ -987,7 +986,7 @@
                 alert("url参数未配置");
             }
         }
-        function responseData(data) {
+        function responseData(data, start, end) {
             var events;
             if (data.issort == false) {
                 if (data.events && data.events.length > 0) {
@@ -1000,23 +999,25 @@
             else {
                 events = data.events;
             }
-            ConcatEvents(events);
+            ConcatEvents(events, start, end);
             render();
 
         }
-        function ConcatEvents(events) {
-            if (events && events.length > 0) {
+        function ConcatEvents(events, start, end) {
+            if (!events) {
+                events = [];
+            }
+            if (events) {
                 if (option.eventItems.length == 0) {
-                    return events;
+                    option.eventItems= events;
                 }
                 else {
                     var l = events.length;
                     var sl = option.eventItems.length;
                     var sI = 0;
                     var eI = sl;
-                    var s = events[0][2];
-                    s = new Date(s.getFullYear(), s.getMonth(), s.getDate());
-                    var e = events[l - 1][2];
+                    var s = start;
+                    var e = end;
                     if (option.eventItems[0][2] > e) // 第一个的开始时间都要大于请求的最后一个的开始时间
                     {
                         option.eventItems = events.concat(option.eventItems);
@@ -1168,8 +1169,8 @@
             return r && r2;
         }
 
-        function buildtempdayevent(sh, sm, eh, em, h, title, w, resize,thindex) {
-            var theme = thindex !=undefined && thindex>=0 ?tc(thindex):tc();
+        function buildtempdayevent(sh, sm, eh, em, h, title, w, resize, thindex) {
+            var theme = thindex != undefined && thindex >= 0 ? tc(thindex) : tc();
             var newtemp = Tp(__SCOLLEVENTTEMP, {
                 bdcolor: theme[0],
                 bgcolor2: theme[0],
@@ -1370,12 +1371,7 @@
             var width = (me.width() + 2) * 1.5;
             var top = offsetP.top + 15;
             var left = offsetMe.left;
-            var maxleft = document.documentElement.clientWidth;
-            if (left + width >= maxleft) {
-                left = offsetMe.left - (me.width() + 2) * 0.5;
-            }
 
-            var newOff = { left: left, top: top, "z-index": 180, width: width, "visibility": "visible" };
             var daystr = this.abbr;
             var arrdays = daystr.split('/');
             var day = new Date(arrdays[0], parseInt(arrdays[1] - 1), arrdays[2]);
@@ -1409,6 +1405,16 @@
             });
 
             edata = events = null;
+            var height = cc.height();
+            var maxleft = document.documentElement.clientWidth;
+            var maxtop = document.documentElement.clientHeight;
+            if (left + width >= maxleft) {
+                left = offsetMe.left - (me.width() + 2) * 0.5;
+            }
+            if (top + heigth >= maxtop) {
+                top = maxtop - height - 2;
+            }
+            var newOff = { left: left, top: top, "z-index": 180, width: width, "visibility": "visible" };
             cc.css(newOff);
             $(document).one("click", closeCc);
             return false;
@@ -1422,9 +1428,11 @@
                 var id = data[0];
                 var os = data[2];
                 var od = data[3];
+                var zone = new Date().getTimezoneOffset() / 60 * -1;
                 var param = [{ "name": "calendarId", value: id },
 							{ "name": "CalendarStartTime", value: start.Format("yyyy-MM-dd HH:mm:ss") },
-							{ "name": "CalendarEndTime", value: end.Format("yyyy-MM-dd HH:mm:ss") }
+							{ "name": "CalendarEndTime", value: end.Format("yyyy-MM-dd HH:mm:ss") },
+							{ "name": "timezone", value: zone }
 						   ];
                 var d;
                 if (option.quickUpdateHandler && $.isFunction(option.quickUpdateHandler)) {
@@ -1494,10 +1502,12 @@
                         option.isloading = false;
                         return false;
                     }
+                    var zone = new Date().getTimezoneOffset() / 60 * -1;
                     var param = [{ "name": "CalendarTitle", value: what },
 						{ "name": "CalendarStartTime", value: datestart },
 						{ "name": "CalendarEndTime", value: dateend },
-						{ "name": "IsAllDayEvent", value: allday}];
+						{ "name": "IsAllDayEvent", value: allday },
+						{ "name": "timezone", value: zone}];
                     if (option.quickAddHandler && $.isFunction(option.quickAddHandler)) {
                         option.quickAddHandler.call(this, param);
                         $("#bbit-cal-buddle").css("visibility", "hidden");
@@ -1688,8 +1698,10 @@
                 //Resize GridContainer
             }
         }
-
-        function initevents(viewtype) {           
+        function returnfalse() {
+            return false;
+        }
+        function initevents(viewtype) {
             if (viewtype == "week" || viewtype == "day") {
                 $("div.chip", gridcontainer).each(function(i) {
                     var chip = $(this);
@@ -1701,6 +1713,9 @@
                             dragStart.call($(this).parent().parent(), "dw4", e); return false;
                         });
                     }
+                    else {
+                        chip.mousedown(returnfalse)
+                    }
                 });
                 $("div.rb-o", gridcontainer).each(function(i) {
                     var chip = $(this);
@@ -1708,6 +1723,9 @@
                     if (chip.hasClass("drag") && viewtype == "week") {
                         //drag;
                         chip.mousedown(function(e) { dragStart.call(this, "dw5", e); return false; });
+                    }
+                    else {
+                        chip.mousedown(returnfalse)
                     }
                 });
                 //给当日的添加
@@ -1730,6 +1748,9 @@
                     if (chip.hasClass("drag")) {
                         //drag;
                         chip.mousedown(function(e) { dragStart.call(this, "m2", e); return false; });
+                    }
+                    else {
+                        chip.mousedown(returnfalse)
                     }
                 });
                 $("td.st-more", gridcontainer).each(function(i) {
@@ -1764,7 +1785,7 @@
                     var top = offset.top;
                     var l = option.view == "day" ? 1 : 7;
                     var py = w % l;
-                    var pw = parseInt(w / l); 
+                    var pw = parseInt(w / l);
                     //每个单元格的宽度
                     if (py > l / 2 + 1) {
                         pw++;
@@ -1805,7 +1826,7 @@
                     var top = offset.top;
                     var l = 7;
                     var py = w % l;
-                    var pw = parseInt(w / l); 
+                    var pw = parseInt(w / l);
                     //每个单元格的宽度
                     if (py > l / 2 + 1) {
                         pw++;
@@ -1833,13 +1854,13 @@
                     var l = 7;
                     var yl = obj.children().length;
                     var py = w % l;
-                    var pw = parseInt(w / l); 
+                    var pw = parseInt(w / l);
                     //每个单元格的宽度
                     if (py > l / 2 + 1) {
                         pw++;
                     }
                     //纵向单元格的高度
-                    var h = $("#mvrow_0").height(); 		
+                    var h = $("#mvrow_0").height();
                     var xa = [];
                     var ya = [];
                     for (var i = 0; i < l; i++) {
@@ -1868,7 +1889,7 @@
                     var l = 7;
                     var yl = row0.parent().children().length;
                     var py = w % l;
-                    var pw = parseInt(w / l); 
+                    var pw = parseInt(w / l);
                     //每个单元格的宽度
                     if (py > l / 2 + 1) {
                         pw++;
@@ -2004,7 +2025,7 @@
                                     d.target.hide();
                                     ny = gP(gh.sh, gh.sm);
                                     d.top = ny;
-                                    tempdata = buildtempdayevent(gh.sh, gh.sm, gh.eh, gh.em, gh.h, data[1],false,false,data[7]);
+                                    tempdata = buildtempdayevent(gh.sh, gh.sm, gh.eh, gh.em, gh.h, data[1], false, false, data[7]);
                                     var cpwrap = $("<div class='ca-evpi drag-chip-wrapper' style='top:" + ny + "px'/>").html(tempdata);
                                     var evid = d.target.parent().attr("id").replace("tgCol", "#tgOver");
                                     $(evid).append(cpwrap);
@@ -2041,7 +2062,7 @@
                                         //log.info("ny=" + ny);
                                         gh = gW(ny, ny + d.h);
                                         //log.info("sh=" + gh.sh + ",sm=" + gh.sm);
-                                        tempdata = buildtempdayevent(gh.sh, gh.sm, gh.eh, gh.em, gh.h, data[1],false,false,data[7]);
+                                        tempdata = buildtempdayevent(gh.sh, gh.sm, gh.eh, gh.em, gh.h, data[1], false, false, data[7]);
                                         d.cpwrap.css("top", ny + "px").html(tempdata);
                                     }
                                     d.ny = ny;
@@ -2068,7 +2089,7 @@
                                     d.target.hide();
                                     ny = gP(gh.sh, gh.sm);
                                     d.top = ny;
-                                    tempdata = buildtempdayevent(gh.sh, gh.sm, gh.eh, gh.em, gh.h, data[1], "100%", true,data[7]);
+                                    tempdata = buildtempdayevent(gh.sh, gh.sm, gh.eh, gh.em, gh.h, data[1], "100%", true, data[7]);
                                     var cpwrap = $("<div class='ca-evpi drag-chip-wrapper' style='top:" + ny + "px'/>").html(tempdata);
                                     var evid = d.target.parent().attr("id").replace("tgCol", "#tgOver");
                                     $(evid).append(cpwrap);
@@ -2082,7 +2103,7 @@
                                         var sp = gP(data[2].getHours(), data[2].getMinutes());
                                         var ep = sp + nh;
                                         gh = gW(d.top, d.top + nh);
-                                        tempdata = buildtempdayevent(gh.sh, gh.sm, gh.eh, gh.em, gh.h, data[1], "100%", true,data[7]);
+                                        tempdata = buildtempdayevent(gh.sh, gh.sm, gh.eh, gh.em, gh.h, data[1], "100%", true, data[7]);
                                         d.cpwrap.html(tempdata);
                                     }
                                     d.nh = nh;

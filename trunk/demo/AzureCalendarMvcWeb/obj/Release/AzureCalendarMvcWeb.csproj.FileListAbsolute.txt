@@ -7,3 +7,12 @@ H:\Temp\Azure\AzureCalendarMvc\AzureCalendarMvcWeb\bin\System.Web.Abstractions.d
 H:\Temp\Azure\AzureCalendarMvc\AzureCalendarMvcWeb\bin\System.Web.Mvc.dll
 H:\Temp\Azure\AzureCalendarMvc\AzureCalendarMvcWeb\bin\System.Web.Routing.dll
 H:\Temp\Azure\AzureCalendarMvc\AzureCalendarMvcWeb\bin\System.Web.Mvc.xml
+I:\MyWorkDir\XgCalendar\PubSource\demo\AzureCalendarMvcWeb\bin\AzureCalendarMvcWeb.dll
+I:\MyWorkDir\XgCalendar\PubSource\demo\AzureCalendarMvcWeb\bin\AzureCalendarMvcWeb.pdb
+I:\MyWorkDir\XgCalendar\PubSource\demo\AzureCalendarMvcWeb\bin\System.Web.Abstractions.dll
+I:\MyWorkDir\XgCalendar\PubSource\demo\AzureCalendarMvcWeb\bin\System.Web.Mvc.dll
+I:\MyWorkDir\XgCalendar\PubSource\demo\AzureCalendarMvcWeb\bin\System.Web.Routing.dll
+I:\MyWorkDir\XgCalendar\PubSource\demo\AzureCalendarMvcWeb\bin\System.Web.Mvc.xml
+I:\MyWorkDir\XgCalendar\PubSource\demo\AzureCalendarMvcWeb\obj\Release\ResolveAssemblyReference.cache
+I:\MyWorkDir\XgCalendar\PubSource\demo\AzureCalendarMvcWeb\obj\Release\AzureCalendarMvcWeb.dll
+I:\MyWorkDir\XgCalendar\PubSource\demo\AzureCalendarMvcWeb\obj\Release\AzureCalendarMvcWeb.pdb

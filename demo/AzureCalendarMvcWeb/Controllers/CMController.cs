@@ -95,14 +95,22 @@ namespace AzureCalendarMvcWeb.Controllers
         private static List<object[]> ConvertToStringArray(ICollection<Calendar> list)
         {
             List<object[]> relist = new List<object[]>();
+            int serverzone = TimeHelper.GetTimeZone();
             if (list != null && list.Count > 0)
             {
                 foreach (Calendar entity in list)
                 {
+                    int clientzone = entity.MasterId.HasValue ? entity.MasterId.Value : 8;
+                  
+                    var zonediff = clientzone - serverzone;
+                    //时区转换
+                    entity.StartTime = entity.StartTime.AddHours(zonediff);
+                    entity.EndTime = entity.EndTime.AddHours(zonediff);
+
                     relist.Add(new object[] { entity.Id, 
                        entity.Subject, 
-                       entity.StartTime.ToUniversalTime(), 
-                       entity.EndTime.ToUniversalTime(), 
+                       entity.StartTime, 
+                       entity.EndTime, 
                        entity.IsAllDayEvent ?1: 0, 
                        entity.StartTime.ToShortDateString() != entity.EndTime.ToShortDateString() ?1 : 0,
                        entity.InstanceType== 2?1:0,string.IsNullOrEmpty(entity.Category)?-1:Convert.ToInt32(entity.Category),1,"","" });

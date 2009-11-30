@@ -79,7 +79,9 @@ namespace AzureCalendarMvcWeb.Controllers
             CalendarViewType viewType = (CalendarViewType)Enum.Parse(typeof(CalendarViewType), form["viewtype"]);
             string strshowday = form["showdate"];
             DateTime showdate;
-        
+            int clientzone = Convert.ToInt32(form["timezone"]);
+            int serverzone = TimeHelper.GetTimeZone();
+            var zonediff = serverzone - clientzone;
             bool b = DateTime.TryParse(strshowday, out showdate);
             if (!b)
             {
@@ -87,7 +89,9 @@ namespace AzureCalendarMvcWeb.Controllers
                 return Json(ret);
             }
             var format = new CalendarViewFormat(viewType, showdate, DayOfWeek.Monday);
-            List<Calendar> list = _repository.QueryCalendars(format.StartDate, format.EndDate, UserId);
+            var qstart = format.StartDate.AddHours(zonediff);
+            var qend = format.EndDate.AddHours(zonediff);
+            List<Calendar> list = _repository.QueryCalendars(qstart, qend, UserId);
             var data = new JsonCalendarViewData(ConvertToStringArray(list), format.StartDate, format.EndDate);
             return Json(data);
         }
@@ -95,24 +99,24 @@ namespace AzureCalendarMvcWeb.Controllers
         private static List<object[]> ConvertToStringArray(ICollection<Calendar> list)
         {
             List<object[]> relist = new List<object[]>();
-            int serverzone = TimeHelper.GetTimeZone();
             if (list != null && list.Count > 0)
             {
+                int serverzone = TimeHelper.GetTimeZone();
                 foreach (Calendar entity in list)
                 {
                     int clientzone = entity.MasterId.HasValue ? entity.MasterId.Value : 8;
                   
                     var zonediff = clientzone - serverzone;
                     //时区转换
-                    entity.StartTime = entity.StartTime.AddHours(zonediff);
-                    entity.EndTime = entity.EndTime.AddHours(zonediff);
+                    var s = entity.StartTime.AddHours(zonediff);
+                    var e = entity.EndTime.AddHours(zonediff);
 
                     relist.Add(new object[] { entity.Id, 
                        entity.Subject, 
                        entity.StartTime, 
                        entity.EndTime, 
                        entity.IsAllDayEvent ?1: 0, 
-                       entity.StartTime.ToShortDateString() != entity.EndTime.ToShortDateString() ?1 : 0,
+                       s.ToShortDateString() != e.ToShortDateString() ?1 : 0,
                        entity.InstanceType== 2?1:0,string.IsNullOrEmpty(entity.Category)?-1:Convert.ToInt32(entity.Category),1,"","" });
                 }
             }

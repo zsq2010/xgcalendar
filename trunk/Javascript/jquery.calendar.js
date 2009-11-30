@@ -1,6 +1,6 @@
 ﻿/*
- * XgCalendar v1.0.1
- * Base on jQuery 1.3+
+ * XgCalendar v1.0.0
+ * Base on jQuery 1.2.6+
  * http://xuanye.cnblogs.com/
  *
  * Copyright (c) 2009 Xuanye.wan
@@ -935,9 +935,11 @@
                 if (option.onBeforeRequestData && $.isFunction(option.onBeforeRequestData)) {
                     option.onBeforeRequestData(1);
                 }
+				var zone = new Date().getTimezoneOffset() / 60 * -1;
                 var param = [
                 { name: "showdate", value: option.showday.Format("yyyy-MM-dd") },
-                { name: "viewtype", value: option.view }
+                { name: "viewtype", value: option.view },
+				 { name: "timezone", value: zone }
                 ];
                 if (option.extParam) {
                     for (var pi = 0; pi < option.extParam.length; pi++) {
@@ -1411,7 +1413,7 @@
             if (left + width >= maxleft) {
                 left = offsetMe.left - (me.width() + 2) * 0.5;
             }
-            if (top + heigth >= maxtop) {
+            if (top + height>= maxtop) {
                 top = maxtop - height - 2;
             }
             var newOff = { left: left, top: top, "z-index": 180, width: width, "visibility": "visible" };

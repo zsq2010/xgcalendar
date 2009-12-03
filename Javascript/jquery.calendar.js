@@ -935,7 +935,7 @@
                 if (option.onBeforeRequestData && $.isFunction(option.onBeforeRequestData)) {
                     option.onBeforeRequestData(1);
                 }
-				var zone = new Date().getTimezoneOffset() / 60 * -1;
+                var zone = new Date().getTimezoneOffset() / 60 * -1;
                 var param = [
                 { name: "showdate", value: option.showday.Format("yyyy-MM-dd") },
                 { name: "viewtype", value: option.view },
@@ -1005,15 +1005,39 @@
             render();
 
         }
+        function clearrepeat(events, start, end) {           
+            var jl = events.length;
+            if (jl > 0) {
+                var es = events[0][2];
+                var el = events[jl - 1][2];
+                for (var i = 0, l = option.eventItems.length; i < l; i++) {
+
+                    if (option.eventItems[i][2] > el || jl == 0) {
+                        break;
+                    }
+                    if (option.eventItems[i][2] >= es) {
+                        for (var j = 0; j < jl; j++) {
+                            if (option.eventItems[i][0] == events[j][0] && option.eventItems[i][2] < start) {
+                                events.splice(j, 1); //重复了移除
+                                jl--;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         function ConcatEvents(events, start, end) {
             if (!events) {
                 events = [];
             }
             if (events) {
                 if (option.eventItems.length == 0) {
-                    option.eventItems= events;
+                    option.eventItems = events;
                 }
                 else {
+                    //清理重复
+                    clearrepeat(events, start, end);
                     var l = events.length;
                     var sl = option.eventItems.length;
                     var sI = 0;
@@ -1413,7 +1437,7 @@
             if (left + width >= maxleft) {
                 left = offsetMe.left - (me.width() + 2) * 0.5;
             }
-            if (top + height>= maxtop) {
+            if (top + height >= maxtop) {
                 top = maxtop - height - 2;
             }
             var newOff = { left: left, top: top, "z-index": 180, width: width, "visibility": "visible" };
@@ -1731,10 +1755,13 @@
                     }
                 });
                 //给当日的添加
-                $("td.tg-col", gridcontainer).each(function(i) {
-                    $(this).mousedown(function(e) { dragStart.call(this, "dw1", e); return false; });
-                });
-                $("#weekViewAllDaywk").mousedown(function(e) { dragStart.call(this, "dw2", e); return false; });
+                if (option.readonly == false) {
+                    $("td.tg-col", gridcontainer).each(function(i) {
+                        $(this).mousedown(function(e) { dragStart.call(this, "dw1", e); return false; });
+                    });
+                    $("#weekViewAllDaywk").mousedown(function(e) { dragStart.call(this, "dw2", e); return false; });
+                }
+
                 if (viewtype == "week") {
                     $("#dvwkcontaienr th.gcweekname").each(function(i) {
                         $(this).click(weektoday);
@@ -1761,7 +1788,9 @@
                         moreshow.call(this, $(this).parent().parent().parent().parent()[0]); return false;
                     }).mousedown(function() { return false; });
                 });
-                $("#mvEventContainer").mousedown(function(e) { dragStart.call(this, "m1", e); return false; });
+                if (option.readonly == false) {
+                    $("#mvEventContainer").mousedown(function(e) { dragStart.call(this, "m1", e); return false; });
+                }
             }
 
         }

@@ -30,7 +30,7 @@
             onItemCreateHandler: false,
             onItemDeleteHandler: false,
             onWeekToDay: false,
-            quickAddHandler: false, //快速添加的拦截函数，该参数设置后quickAddUrl参数的设置将  v被忽略
+            quickAddHandler: false, //快速添加的拦截函数，该参数设置后quickAddUrl参数的设置将被忽略
             quickAddUrl: "", //快速添加日程Post Url 地址
             quickUpdateUrl: "",
             quickDeleteUrl: "", //快速删除日程的
@@ -561,14 +561,42 @@
                 hv.push(tt);
             }
         }
-
+		function getTitle(event)
+		{		
+			var timeshow ,locationshow,attendsshow,eventshow;
+			var showtime = event[4]!=1;
+			eventshow = event[1];
+			var startformat =getymformat(event[2],null,showtime,true);
+			var endformat =getymformat(event[3],event[2],showtime,true);
+			timeshow = event[2].Format(startformat)+"-"+event[3].Format(endformat);
+			locationshow = (event[9]!=undefined && event[9] !="")?event[9]:"未设置";
+			attendsshow =  (event[10]!=undefined && event[10] !="")?event[10]:"";
+			var ret=[];
+			if(event[4]==1)
+			{
+				ret.push("[全天日程]\r\n");
+			}
+			else
+			{
+				if(event[5]==1)
+				{
+					ret.push("[跨天日程]\r\n");
+				}
+			}
+			ret.push("时  间：",timeshow,"\r\n事  件：",eventshow,"\r\n地  点：",locationshow);
+			if(attendsshow !="")
+			{
+				ret.push("\r\n参与人：",attendsshow);
+			}
+			return ret.join("");
+		}
         //单个跨天日程和全天日程，或者是月视图下的日程
         function BuildDayEvent(theme, e, index) {
             var p = { bdcolor: theme[0], bgcolor2: theme[0], bgcolor1: theme[2], width: "70%", icon: "", title: "", data: "" };
             p.starttime = pZero(e.st.hour) + ":" + pZero(e.st.minute);
             p.endtime = pZero(e.et.hour) + ":" + pZero(e.et.minute);
             p.content = e.event[1];
-            p.title = e.event[1];
+            p.title = getTitle(e.event);
             p.data = e.event.join("$");
             var icons = [];
             icons.push("<I class=\"cic cic-tmr\">&nbsp;</I>");
@@ -875,14 +903,8 @@
                 theme = tc();
             }
             var p = { color: theme[2], title: "", extendClass: "", extendHTML: "", data: "" };
-            var t = { crossevent: "", alldayevent: "", topic: "", startdate: "", enddate: "" };
-            var title = "${crossevent}${alldayevent} ${topic}\r\n${startdate}-${enddate}";
-            t.alldayevent = e.allday ? "[全天]" : "";
-            t.crossevent = e.crossday ? "[跨天]" : "";
-            t.topic = e.event[1];
-            t.startdate = e.event[2].Format("yyyy年MM月dd日");
-            t.enddate = e.event[3].Format("yyyy年MM月dd日");
-            p.title = Tp(title, t);
+           
+            p.title =getTitle(e.event);
             p.id = "bbit_cal_event_" + e.event[0];
             if (option.enableDrag && e.event[8] == 1) {
                 p.eclass = "drag";
@@ -1036,11 +1058,12 @@
                     option.eventItems = events;
                 }
                 else {
+					//debugger;
                     //清理重复
                     clearrepeat(events, start, end);
                     var l = events.length;
                     var sl = option.eventItems.length;
-                    var sI = 0;
+                    var sI = -1;
                     var eI = sl;
                     var s = start;
                     var e = end;
@@ -1055,7 +1078,7 @@
                         return;
                     }
                     for (var i = 0; i < sl; i++) {
-                        if (option.eventItems[i][2] >= s && sI == 0) {
+                        if (option.eventItems[i][2] >= s && sI <0) {
                             sI = i;
                             continue;
                         }
@@ -1064,7 +1087,11 @@
                             break;
                         }
                     }
-                    option.eventItems = [].concat(option.eventItems.slice(0, sI - 1), events, option.eventItems.slice(eI));
+					
+					var e1= sI<=0?[]:option.eventItems.slice(0, sI);
+					var e2 = eI==sl?[]:option.eventItems.slice(eI);
+                    option.eventItems = [].concat(e1, events, e2);
+					events=e1=e2=null;				
                 }
             }
         }
@@ -1580,7 +1607,7 @@
                     }
                     else {
                         if (option.EditCmdhandler && $.isFunction(option.EditCmdhandler)) {
-                            option.EditCmdhandler.call(this, ['0', '', $("#bbit-cal-start").val(), $("#bbit-cal-end").val(), $("#bbit-cal-allday").val()]);
+                            option.EditCmdhandler.call(this, ['0', $("#bbit-cal-what").val(), $("#bbit-cal-start").val(), $("#bbit-cal-end").val(), $("#bbit-cal-allday").val()]);
                         }
                         $("#bbit-cal-buddle").css("visibility", "hidden");
                         realsedragevent();

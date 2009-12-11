@@ -33,8 +33,12 @@ namespace AzureCalendarMvcWeb.Models
 
         public List<Calendar> QueryCalendars(DateTime st, DateTime ed, string useId)
         {
-            var list =from n in _dbcontext.Calendars                   
-                      where n.UPAccount==useId &&  ((n.StartTime > st && n.StartTime < ed)  || (n.EndTime > st && n.EndTime < ed))
+          var list =from n in _dbcontext.Calendars                   
+                      where n.UPAccount==useId &&  (
+                      (n.StartTime >= st && n.StartTime < ed)  || 
+                      (n.EndTime >= st && n.EndTime < ed) ||
+                      (n.StartTime<st && n.EndTime >ed)
+                      )
                       orderby n.StartTime   
                       select  n ;
             return list.ToList();

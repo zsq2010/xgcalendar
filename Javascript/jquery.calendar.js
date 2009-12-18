@@ -1561,6 +1561,13 @@
 						{ "name": "CalendarEndTime", value: dateend },
 						{ "name": "IsAllDayEvent", value: allday },
 						{ "name": "timezone", value: zone}];
+
+					if (option.extParam) {
+						for (var pi = 0; pi < option.extParam.length; pi++) {
+							param[param.length] = option.extParam[pi];
+						}
+					}
+
                     if (option.quickAddHandler && $.isFunction(option.quickAddHandler)) {
                         option.quickAddHandler.call(this, param);
                         $("#bbit-cal-buddle").css("visibility", "hidden");

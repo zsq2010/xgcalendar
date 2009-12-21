@@ -33,5 +33,17 @@ namespace AzureCalendarMvcWeb.Helps
 
             return sp.Hours;
         }
+
+        public static int CheckIsCrossEvent(Models.Calendar calendar)
+        {
+            int serverzone = GetTimeZone();
+            int clientzone = calendar.MasterId.HasValue ? calendar.MasterId.Value : 8;
+
+            var zonediff = clientzone - serverzone;
+            //时区转换
+            var s = calendar.StartTime.AddHours(zonediff);
+            var e = calendar.EndTime.AddHours(zonediff);
+            return s.ToShortDateString() != e.ToShortDateString() ? 1 : 0;
+        }
     }
 }

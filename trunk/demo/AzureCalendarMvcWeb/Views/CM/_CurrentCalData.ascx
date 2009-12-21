@@ -6,7 +6,7 @@ var __CURRENTDATA=[<%
         for (int i = 0; i < ViewData.Model.Count; i++)
         {var entity=ViewData.Model[i];
             if(i>0)
-            {%>,<%}%>['<%=entity.Id%>','<%=entity.Subject.Replace("\\",@"\\").Replace("'",@"\'")%>',new Date(<%=TimeHelper.MilliTimeStamp(entity.StartTime)%>),new Date(<%=TimeHelper.MilliTimeStamp(entity.EndTime)%>),<%=entity.IsAllDayEvent ? "1" : "0"%>,<%=entity.StartTime.ToShortDateString() != entity.EndTime.ToShortDateString() ? "1" : "0"%>,<%=entity.InstanceType== 2?"1":"0"%>,<%=string.IsNullOrEmpty(entity.Category) ? "-1" : entity.Category%>,1,'<%=entity.Location %>','<%=entity.AttendeeNames %><%=string.IsNullOrEmpty(entity.OtherAttendee)?"":","+entity.OtherAttendee%>' ]
+            {%>,<%}%>['<%=entity.Id%>','<%=entity.Subject.Replace("\\",@"\\").Replace("'",@"\'")%>',new Date(<%=TimeHelper.MilliTimeStamp(entity.StartTime)%>),new Date(<%=TimeHelper.MilliTimeStamp(entity.EndTime)%>),<%=entity.IsAllDayEvent ? "1" : "0"%>,<%=TimeHelper.CheckIsCrossEvent(entity)%>,<%=entity.InstanceType== 2?"1":"0"%>,<%=string.IsNullOrEmpty(entity.Category) ? "-1" : entity.Category%>,1,'<%=entity.Location %>','<%=entity.AttendeeNames %><%=string.IsNullOrEmpty(entity.OtherAttendee)?"":","+entity.OtherAttendee%>' ]
            <%
         }
     }

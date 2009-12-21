@@ -155,7 +155,7 @@ namespace AzureCalendarMvcWeb.Models
     	///  循环规则
     	/// </summary>
         [SubSonicNullString]
-		public string Recurringrule
+		public string RecurringRule
 		{
 			get;set;
 		}

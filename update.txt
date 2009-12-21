@@ -24,3 +24,6 @@ Subsonic 相关问题 http://Subsonicproject.com/
 
 2009-12-18 
 11:在QuickAdd提交请求时，将exparams参数也提交到后台，以便做判断
+
+2009-12-21
+12:修正了demo中第一次访问，跨时区判断是否跨日的问题。

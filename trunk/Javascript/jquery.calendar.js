@@ -18,30 +18,25 @@
         var def = {
             view: "week", //默认是周视图day,week,month 
             weekstartday: 1,  //默认星期一开始
-            theme: 0, //默认使用第三套主题
-            height: false,
+            theme: 0, //默认使用第一套主题
+            height: false,//视图的高度，如果不设置则默认获取所在页面的高度
             url: "", //请求数据的Url         
-            eventItems: [],
-            method: "POST",
-            showday: new Date(),
-            onBeforeRequestData: false,
-            onAfterRequestData: false,
-            onRequestDataError: false,
-            onItemCreateHandler: false,
-            onItemDeleteHandler: false,
-            onWeekToDay: false,
+            eventItems: [],//日程数据，可通过此参数设置初始化数据
+            method: "POST", //异步提交数据的方式，默认为POST建议不要修改。
+            showday: new Date(), //显示日期，默认为当天
+            onBeforeRequestData: false, //在异步调用调用开始之前执行的函数
+            onAfterRequestData: false, //异步调用完成之后
+            onRequestDataError: false, //在异步调用发生异常时             
+            onWeekToDay: false, //当周视图切换到日视图，因为在转换在内部完成，所以公开一个入口可得到该行为
             quickAddHandler: false, //快速添加的拦截函数，该参数设置后quickAddUrl参数的设置将被忽略
-            quickAddUrl: "", //快速添加日程Post Url 地址
-            quickUpdateUrl: "",
-            quickDeleteUrl: "", //快速删除日程的
-            editUrl: "", //编辑或新增页面
-            viewUrl: "", //查看
-            addHandler: false,
-            autoload: false,
-            readonly: false,
-            extParam: [],
-            enableDrag: true,
-            loadDateR: []
+            quickAddUrl: "", //快速添加日程响应的 Url 地址
+            quickUpdateUrl: "", //拖拽更新时响应的 Url 地址
+            quickDeleteUrl: "", //快速删除日程时响应的Urk 地址       
+            autoload: false,//自动加载，如果eventItems参数没有配置，可启用该参数，默认第一次展现时
+            readonly: false, //是否只读，某些情况下，可设置整个
+            extParam: [], //额外参数，在所以异步请求中，都会附加的额外参数，可配置其他扩展的查询条件
+            enableDrag: true, //是否可拖拽
+            loadDateR: [] //记录已加载过的日程的时间段
         };
         var eventDiv = $("#gridEvent");
         if (eventDiv.length == 0) {
@@ -49,7 +44,7 @@
         }
         var gridcontainer = $(this);
         option = $.extend(def, option);
-        //如果快速更新链接陪游配置，则快速新增不能实现
+        //如果快速更新链接没有配置，则拖拽更新不能实现
         if (option.quickUpdateUrl == null || option.quickUpdateUrl == "") {
             option.enableDrag = false;
         }
@@ -73,7 +68,7 @@
         //初始化高度
         gridcontainer.css("overflow-y", "visible").height(option.height - 8);
 
-        // 如果获取数据的URL已经配置，同时允许自动加载则，加载数据
+        // 如果获取数据的URL已经配置，同时允许自动加载则加载数据
         if (option.url && option.autoload) {
             populate(); //访问数据
         }

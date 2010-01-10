@@ -44,7 +44,7 @@
         }
         var gridcontainer = $(this);
         option = $.extend(def, option);
-        //如果快速更新链接没有配置，则拖拽更新不能实现
+        //如果快速更新链接陪游配置，则快速新增不能实现
         if (option.quickUpdateUrl == null || option.quickUpdateUrl == "") {
             option.enableDrag = false;
         }
@@ -68,7 +68,7 @@
         //初始化高度
         gridcontainer.css("overflow-y", "visible").height(option.height - 8);
 
-        // 如果获取数据的URL已经配置，同时允许自动加载则加载数据
+        // 如果获取数据的URL已经配置，同时允许自动加载则，加载数据
         if (option.url && option.autoload) {
             populate(); //访问数据
         }
@@ -2249,7 +2249,7 @@
                         d.cpwrap.attr("id", wrapid);
                         var start = strtodate(d.target.attr("abbr") + " " + d.cgh.sh + ":" + d.cgh.sm);
                         var end = strtodate(d.target.attr("abbr") + " " + d.cgh.eh + ":" + d.cgh.em);
-                        _dragevent = function() { $("#" + wrapid).remove(); };
+                        _dragevent = function() { $("#" + wrapid).remove(); $("#bbit-cal-buddle").css("visibility", "hidden"); };
                         quickadd(start, end, false, pos);
                         break;
                     case 2: //周日视图添加日程						

@@ -8,8 +8,10 @@
     padding:0;
     font-size:11px;
     font-family:tahoma,verdana,sans-serif;
-    display:none;
+    visibility:hidden;
     background:#fff;
+    left:0px;
+    top:0px;
 }
 .bbit-dp em
 {
@@ -136,6 +138,15 @@ border-collapse:separate;
     display:block;  
     text-align:right;   
 }
+.picker
+{
+	height: 16px;
+	width: 16px;
+	background: url("images/dp/cal.gif") no-repeat left top;
+	margin-left: -19px;
+	cursor: pointer;
+	border: none;
+}
 
 .bbit-dp-inner .bbit-dp-active{cursor:pointer;color:black;}
 .bbit-dp-inner .bbit-dp-selected a{background:#dfecfb url(../images/default/shared/glass-bg.gif) repeat-x left top;border:1px solid #8db2e3;padding:1px 4px;}
@@ -152,7 +163,7 @@ border-collapse:separate;
 .bbit-dp-mp td{padding:2px;font:normal 11px arial,helvetica,tahoma,sans-serif;}
 td.bbit-dp-mp-month,td.bbit-dp-mp-year,td.bbit-dp-mp-ybtn{border:0 none;text-align:center;vertical-align:middle;width:25%;}
 .bbit-dp-mp-ok{margin-right:3px;}
-.bbit-dp-mp-btns button{text-decoration:none;text-align:center;text-decoration:none!important;background:#083772;color:white;border:1px solid;border-color:#36c #005 #005 #36c;padding:1px 3px 1px;font:normal 11px arial,helvetica,tahoma,sans-serif;cursor:pointer;}
+.bbit-dp-mp-btns button{ width:45px;text-decoration:none;text-align:center;text-decoration:none!important;background:#083772;color:white;border:1px solid;border-color:#36c #005 #005 #36c;padding:1px 3px 1px;font:normal 11px arial,helvetica,tahoma,sans-serif;cursor:pointer;}
 .bbit-dp-mp-btns{background:#dfecfb url(images/share/glass-bg.gif) repeat-x left top;}
 .bbit-dp-mp-btns td{border-top:1px solid #c5d2df;text-align:center;}
 td.bbit-dp-mp-month a,td.bbit-dp-mp-year a{display:block;padding:2px 4px;text-decoration:none;text-align:center;color:#15428b;}
@@ -165,3 +176,11 @@ td.bbit-dp-mp-sel a{padding:1px 3px;background:#dfecfb url(images/share/glass-bg
 .bbit-dp-mp-ybtn a.bbit-dp-mp-prev:hover{background-position:-15px -105px;}
 .bbit-dp-mp-ybtn{text-align:center;}
 td.bbit-dp-mp-sep{border-right:1px solid #c5d2df;}
+
+
+.bbit-dp-input
+{
+    width:100px;
+    height:18px;
+    padding-left:4px;
+}

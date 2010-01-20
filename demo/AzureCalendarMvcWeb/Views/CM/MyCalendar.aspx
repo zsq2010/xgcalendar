@@ -1,8 +1,9 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="MyCalendar.aspx" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Import Namespace="AzureCalendarMvcWeb" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
-    <title>我的日程</title>
+    <title><%=Html.Resource("lang,title")%></title>
     <link href="<%=Url.Content("~/Theme/Default/main.css") %>" rel="stylesheet" type="text/css" />
     <link href="<%=Url.Content("~/Theme/Default/dailog.css") %>" rel="stylesheet" type="text/css" />
     <link href="<%=Url.Content("~/Theme/Default/calendar.css") %>" rel="stylesheet" type="text/css" /> 
@@ -13,38 +14,41 @@
 <body>
     <div>
       <div id="calhead" style="padding-left:1px;padding-right:1px;">          
-            <div class="cHead"><div class="ftitle">我的日程</div>
-            <div id="loadingpannel" class="ptogtitle loadicon" style="display: none;">正在加载数据...</div>
-             <div id="errorpannel" class="ptogtitle loaderror" style="display: none;">非常抱歉，无法加载您的活动，请稍后再试</div>
+            <div class="cHead"><div class="ftitle"><%=Html.Resource("lang,title")%></div>
+            <div id="loadingpannel" class="ptogtitle loadicon" style="display: none;"><%=Html.Resource("lang,loaddatamsg")%></div>
+             <div id="errorpannel" class="ptogtitle loaderror" style="display: none;"><%=Html.Resource("lang,defaulterrormsg")%></div>
             </div>          
             
             <div id="caltoolbar" class="ctoolbar">
               <div id="faddbtn" class="fbutton">
-                <div><span title='点击新建日程' class="addcal">新建日程</span></div>
+                <div><span title='<%=Html.Resource("lang,new_event_title")%>' class="addcal">
+                <%=Html.Resource("lang,new_event")%>                
+                </span></div>
             </div>
             <div class="btnseparator"></div>
              <div id="showtodaybtn" class="fbutton">
-                <div><span title='点击返回当前日期' class="showtoday">今天</span></div>
+                <div><span title='<%=Html.Resource("lang,today_title")%> ' class="showtoday">
+                <%=Html.Resource("lang,today")%></span></div>
             </div>
               <div class="btnseparator"></div>
             <div id="showdaybtn" class="fbutton">
-                <div><span title='点击切换到日视图' class="showdayview">日</span></div>
+                <div><span title='<%=Html.Resource("lang,day")%>' class="showdayview"><%=Html.Resource("lang,day")%></span></div>
             </div>
               <div  id="showweekbtn" class="fbutton fcurrent">
-                <div><span title='点击切换到周视图' class="showweekview">周</span></div>
+                <div><span title='<%=Html.Resource("lang,week")%>' class="showweekview"><%=Html.Resource("lang,week")%></span></div>
             </div>
               <div  id="showmonthbtn" class="fbutton">
-                <div><span title='点击切换到月视图' class="showmonthview">月</span></div>
+                <div><span title='<%=Html.Resource("lang,month")%>' class="showmonthview"><%=Html.Resource("lang,month")%></span></div>
             </div>
             <div class="btnseparator"></div>
               <div  id="showreflashbtn" class="fbutton">
-                <div><span title='刷新' class="showdayflash">刷新</span></div>
+                <div><span title='<%=Html.Resource("lang,refresh_title")%>' class="showdayflash"><%=Html.Resource("lang,refresh")%></span></div>
                 </div>
              <div class="btnseparator"></div>
-            <div id="sfprevbtn" title="上一个"  class="fbutton">
+            <div id="sfprevbtn" title="<%=Html.Resource("lang,prev_title")%>"  class="fbutton">
               <span class="fprev"></span>
             </div>
-            <div id="sfnextbtn" title="下一个" class="fbutton">
+            <div id="sfnextbtn" title="<%=Html.Resource("lang,next_title")%>" class="fbutton">
                 <span class="fnext"></span>
             </div>
             <div class="fshowdatep fbutton">
@@ -52,6 +56,13 @@
                         <input type="hidden" name="txtshow" id="hdtxtshow" />
                         <span id="txtdatetimeshow">Loading</span>
                     </div>
+            </div>
+            <div class="btnseparator"></div>
+            <div id="changetochinese" class="fbutton">
+                <div><span title='<%=Html.Resource("lang,chinese")%>' class="chinese"><%=Html.Resource("lang,chinese")%></span></div>
+            </div>
+            <div id="changetoenglish" class="fbutton">
+                <div><span title='<%=Html.Resource("lang,english")%>' class="english"><%=Html.Resource("lang,english")%></span></div>
             </div>
             <div class="clear"></div>
             </div>
@@ -75,11 +86,13 @@
   </div>
     <script src="<%=Url.Content("~/Javascripts/jquery.js")%>" type="text/javascript"></script>  
     <script src="<%=Url.Content("~/Javascripts/Common.js")%>" type="text/javascript"></script>    
-    <script src="<%=Url.Content("~/Javascripts/lib/blackbird.js")%>" type="text/javascript"></script>     
+    <script src="<%=Url.Content("~/Javascripts/lib/blackbird.js")%>" type="text/javascript"></script> 
+    <script src="<%=Url.Content(Html.Resource("lang,datepicker_langpack_url"))%>" type="text/javascript"></script>     
     <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.datepicker.js")%>" type="text/javascript"></script>
     <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.alert.js")%>" type="text/javascript"></script>    
-    <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.ifrmdailog.js")%>" defer="defer" type="text/javascript"></script> 
-    <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.calendar.encode.js?v=1.3")%>" type="text/javascript"></script>   
+    <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.ifrmdailog.js")%>" defer="defer" type="text/javascript"></script>
+    <script src="<%=Url.Content(Html.Resource("lang,calendar_langpack_url"))%>" type="text/javascript"></script>  
+    <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.calendar.encode.js?v=1.5")%>" type="text/javascript"></script>   
     <script type="text/javascript">
         $(document).ready(function() {
             //[id,title,start,end，全天日程，跨日日程,循环日程,theme,'','']          
@@ -92,7 +105,7 @@
                 EditCmdhandler:Edit,
                 DeleteCmdhandler:Delete,
                 ViewCmdhandler:View,    
-                onWeekToDay:wtd,
+                onWeekOrMonthToDay:wtd,
                 onBeforeRequestData: cal_beforerequest,
                 onAfterRequestData: cal_afterrequest,
                 onRequestDataError: cal_onerror, 
@@ -123,16 +136,16 @@
             });
             function cal_beforerequest(type)
             {
-                var t="正在加载数据...";
+                var t="<%=Html.Resource("lang,loaddatamsg")%>";
                 switch(type)
                 {
                     case 1:
-                        t="正在加载数据...";
+                        t="<%=Html.Resource("lang,loaddatamsg")%>";
                         break;
                     case 2:                      
                     case 3:  
                     case 4:    
-                        t="正在处理请求...";                                   
+                        t="<%=Html.Resource("lang,processdatamsg")%>";                                   
                         break;
                 }
                 $("#errorpannel").hide();
@@ -148,7 +161,7 @@
                     case 2:
                     case 3:
                     case 4:
-                        $("#loadingpannel").html("操作成功!");
+                        $("#loadingpannel").html("<%=Html.Resource("lang,successmsg")%>");
                         window.setTimeout(function(){ $("#loadingpannel").hide();},2000);
                     break;
                 }              
@@ -164,7 +177,7 @@
                 if(data)
                 {
                     var url = StrFormat(eurl,data);
-                    OpenModelWindow(url,{ width: 600, height: 400, caption: "管理日程",onclose:function(){
+                    OpenModelWindow(url,{ width: 600, height: 400, caption:"<%=Html.Resource("lang,editcalendar")%>",onclose:function(){
                        $("#gridcontainer").BCalReload();
                     }});
                 }
@@ -175,12 +188,15 @@
                 if(data)
                 {
                     var url = StrFormat(vurl,data);
-                    OpenModelWindow(url,{ width: 600, height: 400, caption: "查看日程"});
+                    OpenModelWindow(url,{ width: 600, height: 400, caption: "<%=Html.Resource("lang,viewcalendar")%>"});
                 }                
             }    
             function Delete(data,callback)
-            {             
-                hiConfirm("是否要删除该日程", '确认',function(r){ r && callback(0);});           
+            {           
+                
+                $.alerts.okButton="<%=Html.Resource("lang,ok")%>";  
+                $.alerts.cancelButton="<%=Html.Resource("lang,cancel")%>";  
+                hiConfirm("<%=Html.Resource("lang,deleteconfirm")%>", '<%=Html.Resource("lang,confirm")%>',function(r){ r && callback(0);});           
             }
             function wtd(p)
             {
@@ -237,7 +253,7 @@
             //点击新增日程
             $("#faddbtn").click(function(e) {
                 var url ="<%=Url.Action("EditCalendar")%>";
-                OpenModelWindow(url,{ width: 500, height: 400, caption: "新增日程"});
+                OpenModelWindow(url,{ width: 500, height: 400, caption: "<%=Html.Resource("lang,addcalendar")%>"});
             });
             //点击回到今天
             $("#showtodaybtn").click(function(e) {
@@ -263,8 +279,14 @@
                     $("#txtdatetimeshow").text(p.datestrshow);
                 }
             });
-
+            $("#changetochinese").click(function(e){
+                location.href="<%=Url.Action("Setlang", "Home", new {lang="zh-CN" })%>";
+            });
+            $("#changetoenglish").click(function(e){
+                location.href="<%=Url.Action("Setlang", "Home", new {lang="en-US" })%>";
+            });
         });
     </script>
+    
 </body>
 </html>

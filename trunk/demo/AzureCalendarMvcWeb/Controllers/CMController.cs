@@ -14,15 +14,17 @@ namespace AzureCalendarMvcWeb.Controllers
     {
         private readonly ICalendarService _service;
         public CMController()
-        {            
-            _service = new CalendarService();
+        {
+           
+            _service = new CalendarService();           
         }
 
+      
         public CMController(ICalendarService service)
-        {
+        {           
             _service = service;
         }
-
+      
         public ActionResult ViewCalendar(int? id)
         {
             Calendar calendar = id.HasValue ? _service.GetCalendar(id.Value) : new Calendar();
@@ -59,18 +61,14 @@ namespace AzureCalendarMvcWeb.Controllers
         }
         
         public ActionResult MyCalendar()
-        {          
+        {
+         
            CalendarViewFormat  format= new CalendarViewFormat(CalendarViewType.week, DateTime.Now, DayOfWeek.Monday);
            List<Calendar> list = _service.QueryCalendars(format.StartDate, format.EndDate, UserId);
 
            return View(list);
         }
-        public ActionResult OldCalendar()
-        {
-           CalendarViewFormat  format= new CalendarViewFormat(CalendarViewType.week, DateTime.Now, DayOfWeek.Monday);
-           List<Calendar> list = _service.QueryCalendars(format.StartDate, format.EndDate, UserId);
-            return View(list);
-        }
+    
 
         [AcceptVerbs(HttpVerbs.Post)]
         public JsonResult GetPersonalCalViewData(FormCollection form)
@@ -85,7 +83,7 @@ namespace AzureCalendarMvcWeb.Controllers
             bool b = DateTime.TryParse(strshowday, out showdate);
             if (!b)
             {
-                var ret = new JsonCalendarViewData(new JsonError("NotVolidDateTimeFormat", "错误的事情格式"));
+                var ret = new JsonCalendarViewData(new JsonError("NotVolidDateTimeFormat", this.Resource("lang,notvoliddatetimeformat")));
                 return Json(ret);
             }
             var format = new CalendarViewFormat(viewType, showdate, DayOfWeek.Monday);
@@ -152,13 +150,13 @@ namespace AzureCalendarMvcWeb.Controllers
             if (!b)
             {
                 r.IsSuccess = false;
-                r.Msg = "错误的时间格式:" + strStartTime;
+                r.Msg = this.Resource("lang,notvoliddatetimeformat")+":" + strStartTime;
                 return Json(r);
             }
             if (!a)
             {
                 r.IsSuccess = false;
-                r.Msg = "错误的时间格式:" + strEndTime;
+                r.Msg = this.Resource("lang,notvoliddatetimeformat")+":" + strEndTime;
                 return Json(r);                
             }           
 
@@ -173,12 +171,12 @@ namespace AzureCalendarMvcWeb.Controllers
                 entity.EndTime = et.AddHours(zonediff);
                 entity.IsAllDayEvent = isallday == "1";
                 entity.UPAccount = UserId;
-                entity.UPName = "管理员";
+                entity.UPName = this.Resource("lang,admin");
                 entity.UPTime = DateTime.Now;
                 entity.MasterId = clientzone;
                 r.Data = _service.AddCalendar(entity);
                 r.IsSuccess = true;
-                r.Msg = "操作成功";
+                r.Msg = this.Resource("lang,successmsg");
                  
             }
             catch (Exception ex)
@@ -211,7 +209,7 @@ namespace AzureCalendarMvcWeb.Controllers
             if (!a || !b)
             {
                 r.IsSuccess = false;
-                r.Msg = "错误的时间格式:" + strStartTime;
+                r.Msg =this.Resource("lang,notvoliddatetimeformat")+":" + strStartTime;
                 return Json(r);
             }
             try
@@ -222,7 +220,7 @@ namespace AzureCalendarMvcWeb.Controllers
                 c.MasterId = clientzone;
                 _service.UpdateCalendar(c);
                 r.IsSuccess = true;
-                r.Msg = "操作成功" ;
+                r.Msg = this.Resource("lang,successmsg");
             }
             catch (Exception ex)
             {
@@ -245,14 +243,14 @@ namespace AzureCalendarMvcWeb.Controllers
             if (string.IsNullOrEmpty(id))
             {
                 r.IsSuccess = false;
-                r.Msg = "参数日程Id无效:";
+                r.Msg = this.Resource("lang,parameterinvalid","Id");
                 return Json(r);
             }
             try
             {
                 _service.DeleteCalendar(Convert.ToInt32(id),base.UserId);
                 r.IsSuccess = true;
-                r.Msg = "操作成功";
+                r.Msg = this.Resource("lang,successmsg");
             }
             catch (Exception ex)
             {
@@ -310,13 +308,13 @@ namespace AzureCalendarMvcWeb.Controllers
                 }
                 if (data.EndTime <= data.StartTime)
                 {
-                    throw new Exception("开始时间小于结束时间");
+                    throw new Exception(this.Resource("lang,starttimegreatthanendtime"));
                 }
                 data.CalendarType = 1;
                 data.InstanceType = 0;
                 data.MasterId = clientzone;
                 data.UPAccount = UserId;
-                data.UPName = "管理员";
+                data.UPName = this.Resource("lang,admin");
                 data.UPTime = DateTime.Now;
 
                 if (data.Id > 0)
@@ -327,7 +325,7 @@ namespace AzureCalendarMvcWeb.Controllers
                     _service.AddCalendar(data);
                 }
                 r.IsSuccess = true;
-                r.Msg = "操作成功";
+                r.Msg = this.Resource("lang,successmsg");
             }
             catch (Exception ex)
             {

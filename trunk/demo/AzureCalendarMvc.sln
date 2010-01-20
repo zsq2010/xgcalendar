@@ -3,12 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureCalendarMvcWeb", "AzureCalendarMvcWeb\AzureCalendarMvcWeb.csproj", "{63B867E4-9695-4D23-B28F-5A764DB7CB6F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "REFDLL", "REFDLL", "{F829BB20-1B35-495F-84C3-6283986EE673}"
-	ProjectSection(SolutionItems) = preProject
-		REFDLL\SubSonic.Core.dll = REFDLL\SubSonic.Core.dll
-		REFDLL\SubSonic.Core.XML = REFDLL\SubSonic.Core.XML
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

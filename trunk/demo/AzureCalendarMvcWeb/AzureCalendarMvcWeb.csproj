@@ -72,6 +72,21 @@
     <Reference Include="System.Web.Mobile" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_GlobalResources\lang.Designer.cs">
+      <DependentUpon>lang.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Include="App_GlobalResources\lang.en.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>lang.en.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\lang.zh-CN.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>lang.zh-CN.resx</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CMController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -83,6 +98,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helps\CalendarViewFormat.cs" />
+    <Compile Include="Helps\LocalizationHelpers.cs" />
     <Compile Include="Helps\TimeHelper.cs" />
     <Compile Include="Models\Calendar.cs" />
     <Compile Include="Models\CalendarService.cs" />
@@ -171,6 +187,8 @@
     <Content Include="Javascripts\Plugins\jquery.form.js" />
     <Content Include="Javascripts\Plugins\jquery.ifrmdailog.js" />
     <Content Include="Javascripts\Plugins\jquery.validate.js" />
+    <Content Include="Javascripts\Plugins\xgcalendar_lang_en_US.js" />
+    <Content Include="Javascripts\Plugins\xgcalendar_lang_zh_CN.js" />
     <Content Include="Theme\Default\alert.css" />
     <Content Include="Theme\Default\calendar.css" />
     <Content Include="Theme\Default\colorselect.css" />
@@ -234,6 +252,24 @@
     <Content Include="Web.config" />
     <Content Include="Views\Shared\Error.aspx" />
     <Content Include="Views\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\lang.en.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>lang.en.Designer.cs</LastGenOutput>
+    </Content>
+    <Content Include="App_GlobalResources\lang.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>lang.Designer.cs</LastGenOutput>
+    </Content>
+    <Content Include="Images\icons\cn.gif" />
+    <Content Include="Images\icons\us.gif" />
+    <Content Include="Javascripts\Plugins\datepicker_lang_en_US.js" />
+    <Content Include="Javascripts\Plugins\datepicker_lang_zh_Cn.js" />
+    <Content Include="App_GlobalResources\lang.zh-CN.resx">
+      <LastGenOutput>lang.zh-CN.Designer.cs</LastGenOutput>
+      <Generator>GlobalResourceProxyGenerator</Generator>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

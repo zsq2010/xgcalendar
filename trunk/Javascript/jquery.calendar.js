@@ -1,5 +1,5 @@
 ﻿/*
- * XgCalendar v1.0.0
+ * XgCalendar v1.2.0.0
  * Base on jQuery 1.2.6+
  * http://xuanye.cnblogs.com/
  *
@@ -14,25 +14,163 @@
  * Source:http://code.google.com/p/xgcalendar/
  */
 ; (function($) {
+    var __WDAY = new Array(i18n.xgcalendar.dateformat.sun, i18n.xgcalendar.dateformat.mon, i18n.xgcalendar.dateformat.tue, i18n.xgcalendar.dateformat.wed, i18n.xgcalendar.dateformat.thu, i18n.xgcalendar.dateformat.fri, i18n.xgcalendar.dateformat.sat);
+    var __MonthName = new Array(i18n.xgcalendar.dateformat.jan, i18n.xgcalendar.dateformat.feb, i18n.xgcalendar.dateformat.mar, i18n.xgcalendar.dateformat.apr, i18n.xgcalendar.dateformat.may, i18n.xgcalendar.dateformat.jun, i18n.xgcalendar.dateformat.jul, i18n.xgcalendar.dateformat.aug, i18n.xgcalendar.dateformat.sep, i18n.xgcalendar.dateformat.oct, i18n.xgcalendar.dateformat.nov, i18n.xgcalendar.dateformat.dec);
+    if (!Clone || typeof (Clone) != "function") {
+        var Clone = function(obj) {
+            var objClone = new Object();
+            if (obj.constructor == Object) {
+                objClone = new obj.constructor();
+            } else {
+                objClone = new obj.constructor(obj.valueOf());
+            }
+            for (var key in obj) {
+                if (objClone[key] != obj[key]) {
+                    if (typeof (obj[key]) == 'object') {
+                        objClone[key] = Clone(obj[key]);
+                    } else {
+                        objClone[key] = obj[key];
+                    }
+                }
+            }
+            objClone.toString = obj.toString;
+            objClone.valueOf = obj.valueOf;
+            return objClone;
+        }
+    }
+    if (!dateFormat || typeof (dateFormat) != "function") {
+        var dateFormat = function(format) {
+            var o = {
+                "M+": this.getMonth() + 1,
+                "d+": this.getDate(),
+                "h+": this.getHours(),
+                "H+": this.getHours(),
+                "m+": this.getMinutes(),
+                "s+": this.getSeconds(),
+                "q+": Math.floor((this.getMonth() + 3) / 3),
+                "w": "0123456".indexOf(this.getDay()),
+                "W": __WDAY[this.getDay()],
+                "L": __MonthName[this.getMonth()] //non-standard
+            };
+            if (/(y+)/.test(format)) {
+                format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            }
+            for (var k in o) {
+                if (new RegExp("(" + k + ")").test(format))
+                    format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+            }
+            return format;
+        };
+    }
+    if (!DateAdd || typeof (DateDiff) != "function") {
+        var DateAdd = function(interval, number, idate) {
+            number = parseInt(number);
+            var date;
+            if (typeof (idate) == "string") {
+                date = idate.split(/\D/);
+                eval("var date = new Date(" + date.join(",") + ")");
+            }
+
+            if (typeof (idate) == "object") {
+                date = new Date(idate.toString());
+            }
+            switch (interval) {
+                case "y": date.setFullYear(date.getFullYear() + number); break;
+                case "m": date.setMonth(date.getMonth() + number); break;
+                case "d": date.setDate(date.getDate() + number); break;
+                case "w": date.setDate(date.getDate() + 7 * number); break;
+                case "h": date.setHours(date.getHours() + number); break;
+                case "n": date.setMinutes(date.getMinutes() + number); break;
+                case "s": date.setSeconds(date.getSeconds() + number); break;
+                case "l": date.setMilliseconds(date.getMilliseconds() + number); break;
+            }
+            return date;
+        }
+    }
+    if (!DateDiff || typeof (DateDiff) != "function") {
+        var DateDiff = function(interval, d1, d2) {
+            switch (interval) {
+                case "d": //天
+                case "w":
+                    d1 = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
+                    d2 = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
+                    break;  //w
+                case "h":
+                    d1 = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate(), d1.getHours());
+                    d2 = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate(), d2.getHours());
+                    break; //h
+                case "n":
+                    d1 = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate(), d1.getHours(), d1.getMinutes());
+                    d2 = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate(), d2.getHours(), d2.getMinutes());
+                    break;
+                case "s":
+                    d1 = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate(), d1.getHours(), d1.getMinutes(), d1.getSeconds());
+                    d2 = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate(), d2.getHours(), d2.getMinutes(), d2.getSeconds());
+                    break;
+            }
+            var t1 = d1.getTime(), t2 = d2.getTime();
+            var diff = NaN;
+            switch (interval) {
+                case "y": diff = d2.getFullYear() - d1.getFullYear(); break; //y
+                case "m": diff = (d2.getFullYear() - d1.getFullYear()) * 12 + d2.getMonth() - d1.getMonth(); break;    //m
+                case "d": diff = Math.floor(t2 / 86400000) - Math.floor(t1 / 86400000); break;
+                case "w": diff = Math.floor((t2 + 345600000) / (604800000)) - Math.floor((t1 + 345600000) / (604800000)); break; //w
+                case "h": diff = Math.floor(t2 / 3600000) - Math.floor(t1 / 3600000); break; //h
+                case "n": diff = Math.floor(t2 / 60000) - Math.floor(t1 / 60000); break; //
+                case "s": diff = Math.floor(t2 / 1000) - Math.floor(t1 / 1000); break; //s
+                case "l": diff = t2 - t1; break;
+            }
+            return diff;
+
+        }
+    }
+    if ($.fn.noSelect == undefined) {
+        $.fn.noSelect = function(p) { //no select plugin by me :-)
+            if (p == null)
+                prevent = true;
+            else
+                prevent = p;
+            if (prevent) {
+                return this.each(function() {
+                    if ($.browser.msie || $.browser.safari) $(this).bind('selectstart', function() { return false; });
+                    else if ($.browser.mozilla) {
+                        $(this).css('MozUserSelect', 'none');
+                        $('body').trigger('focus');
+                    }
+                    else if ($.browser.opera) $(this).bind('mousedown', function() { return false; });
+                    else $(this).attr('unselectable', 'on');
+                });
+
+            } else {
+                return this.each(function() {
+                    if ($.browser.msie || $.browser.safari) $(this).unbind('selectstart');
+                    else if ($.browser.mozilla) $(this).css('MozUserSelect', 'inherit');
+                    else if ($.browser.opera) $(this).unbind('mousedown');
+                    else $(this).removeAttr('unselectable', 'on');
+                });
+
+            }
+        }; //end noSelect
+    }
     $.fn.bcalendar = function(option) {
         var def = {
             view: "week", //默认是周视图day,week,month 
             weekstartday: 1,  //默认星期一开始
             theme: 0, //默认使用第一套主题
-            height: false,//视图的高度，如果不设置则默认获取所在页面的高度
+            height: false, //视图的高度，如果不设置则默认获取所在页面的高度
             url: "", //请求数据的Url         
-            eventItems: [],//日程数据，可通过此参数设置初始化数据
+            eventItems: [], //日程数据，可通过此参数设置初始化数据
             method: "POST", //异步提交数据的方式，默认为POST建议不要修改。
             showday: new Date(), //显示日期，默认为当天
             onBeforeRequestData: false, //在异步调用调用开始之前执行的函数
             onAfterRequestData: false, //异步调用完成之后
             onRequestDataError: false, //在异步调用发生异常时             
-            onWeekToDay: false, //当周视图切换到日视图，因为在转换在内部完成，所以公开一个入口可得到该行为
+            onWeekOrMonthToDay: false, //当周视图切换到日视图，因为在转换在内部完成，所以公开一个入口可得到该行为
             quickAddHandler: false, //快速添加的拦截函数，该参数设置后quickAddUrl参数的设置将被忽略
             quickAddUrl: "", //快速添加日程响应的 Url 地址
             quickUpdateUrl: "", //拖拽更新时响应的 Url 地址
             quickDeleteUrl: "", //快速删除日程时响应的Urk 地址       
-            autoload: false,//自动加载，如果eventItems参数没有配置，可启用该参数，默认第一次展现时
+            autoload: false, //自动加载，如果eventItems参数没有配置，可启用该参数，默认第一次展现时
             readonly: false, //是否只读，某些情况下，可设置整个
             extParam: [], //额外参数，在所以异步请求中，都会附加的额外参数，可配置其他扩展的查询条件
             enableDrag: true, //是否可拖拽
@@ -49,7 +187,6 @@
             option.enableDrag = false;
         }
         //日期和月的函数
-        var __CHNUM = new Array('日', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十');
         var __SCOLLEVENTTEMP = "<DIV style=\"WIDTH:${width};top:${top};left:${left};\" title=\"${title}\" class=\"chip chip${i} ${drag}\"><div class=\"dhdV\" style=\"display:none\">${data}</div><DIV style=\"BORDER-BOTTOM-COLOR:${bdcolor}\" class=ct>&nbsp;</DIV><DL style=\"BORDER-BOTTOM-COLOR:${bdcolor}; BACKGROUND-COLOR:${bgcolor1}; BORDER-TOP-COLOR: ${bdcolor}; HEIGHT: ${height}px; BORDER-RIGHT-COLOR:${bdcolor}; BORDER-LEFT-COLOR:${bdcolor}\"><DT style=\"BACKGROUND-COLOR:${bgcolor2}\">${starttime} – ${endtime} ${icon}</DT><DD><SPAN>${content}</SPAN></DD><DIV class='resizer' style='display:${redisplay}'><DIV class=rszr_icon>&nbsp;</DIV></DIV></DL><DIV style=\"BORDER-BOTTOM-COLOR:${bdcolor}; BACKGROUND-COLOR:${bgcolor1}; BORDER-TOP-COLOR: ${bdcolor}; BORDER-RIGHT-COLOR: ${bdcolor}; BORDER-LEFT-COLOR:${bdcolor}\" class=cb1>&nbsp;</DIV><DIV style=\"BORDER-BOTTOM-COLOR:${bdcolor}; BORDER-TOP-COLOR:${bdcolor}; BORDER-RIGHT-COLOR:${bdcolor}; BORDER-LEFT-COLOR:${bdcolor}\" class=cb2>&nbsp;</DIV></DIV>";
         var __ALLDAYEVENTTEMP = '<div class="rb-o ${eclass}" id="${id}" title="${title}" style="color:${color};"><div class="dhdV" style="display:none">${data}</div><div class="${extendClass} rb-m" style="background-color:${color}">${extendHTML}<div class="rb-i">${content}</div></div></div>';
         var __MonthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -181,7 +318,7 @@
                     BuildMonthView(showday, events, config);
                     break;
                 default:
-                    alert("没有实现");
+                    alert(i18n.xgcalendar.no_implement);
                     break;
             }
             initevents(option.view); //初始化时间
@@ -193,7 +330,7 @@
         function BuildDaysAndWeekView(startday, l, events, config) {
             var days = [];
             if (l == 1) {
-                var show = startday.Format("M/d (周") + __CHNUM[startday.getDay()] + ")";
+                var show = dateFormat.call(startday, i18n.xgcalendar.dateformat.Md);
                 days.push({ display: show, date: startday, day: startday.getDate(), year: startday.getFullYear(), month: startday.getMonth() + 1 });
                 option.datestrshow = CalDateShow(days[0].date);
                 option.vstart = days[0].date;
@@ -208,7 +345,7 @@
                 var ndate;
                 for (var i = w, j = 0; j < l; i = i + 1, j++) {
                     ndate = DateAdd("d", i, startday);
-                    var show = ndate.Format("M/d (周") + __CHNUM[ndate.getDay()] + ")";
+                    var show = dateFormat.call(ndate, i18n.xgcalendar.dateformat.Md);
                     days.push({ display: show, date: ndate, day: ndate.getDate(), year: ndate.getFullYear(), month: ndate.getMonth() + 1 });
                 }
                 option.vstart = days[0].date;
@@ -248,8 +385,8 @@
             html.push("<table id=\"mvweek\" class=\"mv-daynames-table\" cellSpacing=\"0\" cellPadding=\"0\"><tbody><tr>");
             for (var i = config.weekstartday, j = 0; j < 7; i++, j++) {
                 if (i > 6) i = 0;
-                var p = { dayname: "周" + __CHNUM[i] };
-                html.push("<th class=\"mv-dayname\" title=\"", "周", __CHNUM[i], "\">周", __CHNUM[i], "");
+                var p = { dayname: __WDAY[i] };
+                html.push("<th class=\"mv-dayname\" title=\"", __WDAY[i], "\">", __WDAY[i], "");
             }
             html.push("</tr></tbody></table>");
             html.push("</div>");
@@ -410,10 +547,10 @@
                 }
                 else {
                     ev = ""; // "onclick=\"javascript:FunProxy('week2day',event,this);\"";
-                    title = "点击转到该日期的日视图";
+                    title = i18n.xgcalendar.to_date_view;
                     cl = "wk-daylink";
                 }
-                ht.push("<th abbr='", dayarrs[i].date.Format("yyyy-M-d"), "' class='gcweekname' scope=\"col\"><div title='", title, "' ", ev, " class='wk-dayname'><span class='", cl, "'>", dayarrs[i].display, "</span></div></th>");
+                ht.push("<th abbr='", dateFormat.call(dayarrs[i].date, i18n.xgcalendar.dateformat.fulldayvalue), "' class='gcweekname' scope=\"col\"><div title='", title, "' ", ev, " class='wk-dayname'><span class='", cl, "'>", dayarrs[i].display, "</span></div></th>");
 
             }
             ht.push("<th width=\"16\" rowspan=\"3\">&nbsp;</th>");
@@ -431,7 +568,7 @@
             if (dMax == 0) {
                 ht.push("<tr>");
                 for (var i = 0; i < dayarrs.length; i++) {
-                    ht.push("<td class=\"st-c st-s\"", " ch='qkadd' abbr='", dayarrs[i].date.Format("yyyy-M-d"), "' axis='00:00'>&nbsp;</td>");
+                    ht.push("<td class=\"st-c st-s\"", " ch='qkadd' abbr='", dateFormat.call(dayarrs[i].date, "yyyy-M-d"), "' axis='00:00'>&nbsp;</td>");
                 }
                 ht.push("</tr>");
             }
@@ -464,7 +601,7 @@
                             el++;
                         }
                         else {
-                            ht.push(" st-s' ch='qkadd' abbr='", dayarrs[h].date.Format("yyyy-M-d"), "' axis='00:00'>&nbsp;");
+                            ht.push(" st-s' ch='qkadd' abbr='", dateFormat.call(dayarrs[h].date, i18n.xgcalendar.dateformat.fulldayvalue), "' axis='00:00'>&nbsp;");
                             h++;
                         }
                         ht.push("</td>");
@@ -473,7 +610,7 @@
                 }
                 ht.push("<tr>");
                 for (var h = 0; h < l; h++) {
-                    ht.push("<td class='st-c st-s' ch='qkadd' abbr='", dayarrs[h].date.Format("yyyy-M-d"), "' axis='00:00'>&nbsp;</td>");
+                    ht.push("<td class='st-c st-s' ch='qkadd' abbr='", dateFormat.call(dayarrs[h].date, i18n.xgcalendar.dateformat.fulldayvalue), "' axis='00:00'>&nbsp;</td>");
                 }
                 ht.push("</tr>");
             }
@@ -520,8 +657,8 @@
 
             var l = dayarrs.length;
             for (var i = 0; i < l; i++) {
-                ht.push("<td class=\"tg-col\" ch='qkadd' abbr='", dayarrs[i].date.Format("yyyy-M-d"), "'>");
-                var istoday = dayarrs[i].date.Format("yyyyMMdd") == new Date().Format("yyyyMMdd");
+                ht.push("<td class=\"tg-col\" ch='qkadd' abbr='", dateFormat.call(dayarrs[i].date, i18n.xgcalendar.dateformat.fulldayvalue), "'>");
+                var istoday = dateFormat.call(dayarrs[i].date, "yyyyMMdd") == dateFormat.call(new Date(), "yyyyMMdd");
                 // Today
                 if (istoday) {
                     ht.push("<div style=\"margin-bottom: -1008px; height:1008px\" class=\"tg-today\">&nbsp;</div>");
@@ -556,35 +693,30 @@
                 hv.push(tt);
             }
         }
-		function getTitle(event)
-		{		
-			var timeshow ,locationshow,attendsshow,eventshow;
-			var showtime = event[4]!=1;
-			eventshow = event[1];
-			var startformat =getymformat(event[2],null,showtime,true);
-			var endformat =getymformat(event[3],event[2],showtime,true);
-			timeshow = event[2].Format(startformat)+"-"+event[3].Format(endformat);
-			locationshow = (event[9]!=undefined && event[9] !="")?event[9]:"未设置";
-			attendsshow =  (event[10]!=undefined && event[10] !="")?event[10]:"";
-			var ret=[];
-			if(event[4]==1)
-			{
-				ret.push("[全天日程]\r\n");
-			}
-			else
-			{
-				if(event[5]==1)
-				{
-					ret.push("[跨天日程]\r\n");
-				}
-			}
-			ret.push("时  间：",timeshow,"\r\n事  件：",eventshow,"\r\n地  点：",locationshow);
-			if(attendsshow !="")
-			{
-				ret.push("\r\n参与人：",attendsshow);
-			}
-			return ret.join("");
-		}
+        function getTitle(event) {
+            var timeshow, locationshow, attendsshow, eventshow;
+            var showtime = event[4] != 1;
+            eventshow = event[1];
+            var startformat = getymformat(event[2], null, showtime, true);
+            var endformat = getymformat(event[3], event[2], showtime, true);
+            timeshow = dateFormat.call(event[2], startformat) + "-" + dateFormat.call(event[3], endformat);
+            locationshow = (event[9] != undefined && event[9] != "") ? event[9] : i18n.xgcalendar.i_undefined;
+            attendsshow = (event[10] != undefined && event[10] != "") ? event[10] : "";
+            var ret = [];
+            if (event[4] == 1) {
+                ret.push("[" + i18n.xgcalendar.allday_event + "]\r\n");
+            }
+            else {
+                if (event[5] == 1) {
+                    ret.push("[" + i18n.xgcalendar.repeat_event + "]\r\n");
+                }
+            }
+            ret.push(i18n.xgcalendar.time + "：", timeshow, "\r\n" + i18n.xgcalendar.event + "：", eventshow, "\r\n" + i18n.xgcalendar.location + "：", locationshow);
+            if (attendsshow != "") {
+                ret.push("\r\n" + i18n.xgcalendar.participant + "：", attendsshow);
+            }
+            return ret.join("");
+        }
         //单个跨天日程和全天日程，或者是月视图下的日程
         function BuildDayEvent(theme, e, index) {
             var p = { bdcolor: theme[0], bgcolor2: theme[0], bgcolor1: theme[2], width: "70%", icon: "", title: "", data: "" };
@@ -662,7 +794,7 @@
                 for (var i = 0; i < 7; i++) {
                     var newkeyDate = DateAdd("d", j * 7 + i, startdate);
                     C[j * 7 + i] = newkeyDate;
-                    var newkey = newkeyDate.Format("yyyyMMdd");
+                    var newkey = dateFormat.call(newkeyDate, i18n.xgcalendar.dateformat.fulldaykey);
                     b[i] = hastdata[newkey];
                     if (b[i] && b[i].length > 0) {
                         k += b[i].length;
@@ -680,9 +812,9 @@
 
                 for (var i = 0; i < 7; i++) {
                     var day = C[j * 7 + i];
-                    htb.push("<td abbr='", day.Format("yyyy-M-d"), "' ch='qkadd' axis='00:00' title=''");
+                    htb.push("<td abbr='", dateFormat.call(day, i18n.xgcalendar.dateformat.fulldayvalue), "' ch='qkadd' axis='00:00' title=''");
 
-                    if (day.Format("yyyyMMdd") == new Date().Format("yyyyMMdd")) {
+                    if (dateFormat.call(day, "yyyyMMdd") == dateFormat.call(new Date(), "yyyyMMdd")) {
                         htb.push(" class=\"st-bg st-bg-today\">");
                     }
                     else {
@@ -699,35 +831,34 @@
 
                 //title tr
                 htb.push("<tr>");
-                var titletemp = "<td class=\"st-dtitle${titleClass}\" ch='qkadd' abbr='${abbr}' axis='00:00' title=\"${title}\"><span>${dayshow}</span></td>";
+                var titletemp = "<td class=\"st-dtitle${titleClass}\" ch='qkadd' abbr='${abbr}' axis='00:00' title=\"${title}\"><span class='monthdayshow'>${dayshow}</span></a></td>";
 
                 for (var i = 0; i < 7; i++) {
                     var o = { titleClass: "", dayshow: "" };
                     var day = C[j * 7 + i];
-                    if (day.Format("yyyyMMdd") == new Date().Format("yyyyMMdd")) {
+                    if (dateFormat.call(day, "yyyyMMdd") == dateFormat.call(new Date(), "yyyyMMdd")) {
                         o.titleClass = " st-dtitle-today";
                     }
                     if (day.getMonth() != showmonth) {
                         o.titleClass = " st-dtitle-nonmonth";
                     }
-                    o.title = day.Format("yyyy年M月d日");
+                    o.title = dateFormat.call(day, i18n.xgcalendar.dateformat.fulldayshow);
                     if (day.getDate() == 1) {
                         if (day.getMonth == 0) {
-                            o.dayshow = day.Format("yyyy年M月d日");
+                            o.dayshow = dateFormat.call(day, i18n.xgcalendar.dateformat.fulldayshow);
                         }
                         else {
-                            o.dayshow = day.Format("M月d日");
+                            o.dayshow = dateFormat.call(day, i18n.xgcalendar.dateformat.Md3);
                         }
                     }
                     else {
                         o.dayshow = day.getDate();
                     }
-                    o.abbr = day.Format("yyyy-M-d");
+                    o.abbr = dateFormat.call(day, i18n.xgcalendar.dateformat.fulldayvalue);
                     htb.push(Tp(titletemp, o));
                 }
                 htb.push("</tr>");
                 var sfirstday = C[j * 7];
-
                 BuildMonthRow(htb, formatevents[j], dMax, roweventcount, sfirstday);
                 //htb=htb.concat(rowHtml); rowHtml = null;  
 
@@ -777,7 +908,7 @@
                     var sdtemp = DateAdd("d", f, sD);
                     for (; sdtemp <= eD; sD = sdtemp = DateAdd("d", daylength, sdtemp)) {
                         var d = Clone(s);
-                        var key = sD.Format("yyyyMMdd");
+                        var key = dateFormat.call(sD, i18n.xgcalendar.dateformat.fulldaykey);
                         var x = DateDiff("d", sdtemp, eD);
                         if (hast[key] == null) {
                             hast[key] = [];
@@ -789,7 +920,7 @@
                     }
                 }
                 else {
-                    var key = events[i][2].Format("yyyyMMdd");
+                    var key = dateFormat.call(events[i][2], i18n.xgcalendar.dateformat.fulldaykey);
                     if (hast[key] == null) {
                         hast[key] = [];
                     }
@@ -845,7 +976,7 @@
                         }
                         if (!bs && j == (sc - 1) && z[h] < y[h]) {
                             el++;
-                            $.extend(tempdata, { "axis": h, ch: "more", "abbr": cday[h].Format("yyyy/M/d"), html: "另外" + (y[h] - z[h]) + "个", click: "javascript:alert('more event');" });
+                            $.extend(tempdata, { "axis": h, ch: "more", "abbr": dateFormat.call(cday[h], i18n.xgcalendar.dateformat.fulldayvalue), html: i18n.xgcalendar.others + (y[h] - z[h]) + i18n.xgcalendar.item, click: "javascript:alert('more event');" });
                             tempCss.push("st-more st-moreul");
                             h++;
                         }
@@ -869,12 +1000,12 @@
                     }
                     else {
                         if (j == (sc - 1) && z[h] < y[h] && y[h] > 0) {
-                            $.extend(tempdata, { "axis": h, ch: "more", "abbr": cday[h].Format("yyyy/M/d"), html: "另外" + (y[h] - z[h]) + "个", click: "javascript:alert('more event');" });
+                            $.extend(tempdata, { "axis": h, ch: "more", "abbr": dateFormat.call(cday[h], i18n.xgcalendar.dateformat.fulldayvalue), html: i18n.xgcalendar.others + (y[h] - z[h]) + i18n.xgcalendar.item, click: "javascript:alert('more event');" });
                             tempCss.push("st-more st-moreul");
                             h++;
                         }
                         else {
-                            $.extend(tempdata, { html: "&nbsp;", ch: "qkadd", "axis": "00:00", "abbr": cday[h].Format("yyyy-M-d"), title: "" });
+                            $.extend(tempdata, { html: "&nbsp;", ch: "qkadd", "axis": "00:00", "abbr": dateFormat.call(cday[h], i18n.xgcalendar.dateformat.fulldayvalue), title: "" });
                             tempCss.push("st-s");
                             h++;
                         }
@@ -898,8 +1029,8 @@
                 theme = tc();
             }
             var p = { color: theme[2], title: "", extendClass: "", extendHTML: "", data: "" };
-           
-            p.title =getTitle(e.event);
+
+            p.title = getTitle(e.event);
             p.id = "bbit_cal_event_" + e.event[0];
             if (option.enableDrag && e.event[8] == 1) {
                 p.eclass = "drag";
@@ -954,7 +1085,7 @@
                 }
                 var zone = new Date().getTimezoneOffset() / 60 * -1;
                 var param = [
-                { name: "showdate", value: option.showday.Format("yyyy-MM-dd") },
+                { name: "showdate", value: dateFormat.call(option.showday, i18n.xgcalendar.dateformat.fulldayvalue) },
                 { name: "viewtype", value: option.view },
 				 { name: "timezone", value: zone }
                 ];
@@ -991,7 +1122,7 @@
                             if (option.onRequestDataError) {
                                 option.onRequestDataError(1, data);
                             } else {
-                                alert("获取数据发生异常;");
+                                alert(i18n.xgcalendar.get_data_exception);
                             }
                             if (option.onAfterRequestData && $.isFunction(option.onAfterRequestData)) {
                                 option.onAfterRequestData(1);
@@ -1002,7 +1133,7 @@
                 });
             }
             else {
-                alert("url参数未配置");
+                alert("url" + i18n.xgcalendar.i_undefined);
             }
         }
         function responseData(data, start, end) {
@@ -1022,7 +1153,7 @@
             render();
 
         }
-        function clearrepeat(events, start, end) {           
+        function clearrepeat(events, start, end) {
             var jl = events.length;
             if (jl > 0) {
                 var es = events[0][2];
@@ -1053,7 +1184,7 @@
                     option.eventItems = events;
                 }
                 else {
-					//debugger;
+                    //debugger;
                     //清理重复
                     clearrepeat(events, start, end);
                     var l = events.length;
@@ -1073,7 +1204,7 @@
                         return;
                     }
                     for (var i = 0; i < sl; i++) {
-                        if (option.eventItems[i][2] >= s && sI <0) {
+                        if (option.eventItems[i][2] >= s && sI < 0) {
                             sI = i;
                             continue;
                         }
@@ -1082,23 +1213,23 @@
                             break;
                         }
                     }
-					
-					var e1= sI<=0?[]:option.eventItems.slice(0, sI);
-					var e2 = eI==sl?[]:option.eventItems.slice(eI);
+
+                    var e1 = sI <= 0 ? [] : option.eventItems.slice(0, sI);
+                    var e2 = eI == sl ? [] : option.eventItems.slice(eI);
                     option.eventItems = [].concat(e1, events, e2);
-					events=e1=e2=null;				
+                    events = e1 = e2 = null;
                 }
             }
         }
         //region 工具函数开始 {
-        function weektoday(e) {
+        function weekormonthtoday(e) {
             var th = $(this);
             var daystr = th.attr("abbr");
             option.showday = strtodate(daystr + " 00:00");
             option.view = "day";
             render();
-            if (option.onWeekToDay) {
-                option.onWeekToDay(option);
+            if (option.onweekormonthtoday) {
+                option.onweekormonthtoday(option);
             }
             return false;
         }
@@ -1146,7 +1277,7 @@
         function fomartTimeShow(h) {
             return h < 10 ? "0" + h + ":00" : h + ":00";
         }
-        function getymformat(date, comparedate, isshowtime, isshowweek) {
+        function getymformat(date, comparedate, isshowtime, isshowweek, showcompare) {
             var showyear = isshowtime != undefined ? (date.getFullYear() != new Date().getFullYear()) : true;
             var showmonth = true;
             var showday = true;
@@ -1154,7 +1285,7 @@
             var showweek = isshowweek || false;
             if (comparedate) {
                 showyear = comparedate.getFullYear() != date.getFullYear();
-                showmonth = comparedate.getFullYear() != date.getFullYear() || date.getMonth() != comparedate.getMonth();
+                //showmonth = comparedate.getFullYear() != date.getFullYear() || date.getMonth() != comparedate.getMonth();
                 if (comparedate.getFullYear() == date.getFullYear() &&
 					date.getMonth() == comparedate.getMonth() &&
 					date.getDate() == comparedate.getDate()
@@ -1164,15 +1295,24 @@
             }
 
             var a = [];
-            a.push(showyear ? "yyyy年" : "", showmonth ? "M月" : "", showday ? "d日" : "", showweek ? "( 周W )" : "", showtime ? " HH:mm" : "");
+            if (showyear) {
+                a.push(i18n.xgcalendar.dateformat.fulldayshow)
+            } else if (showmonth) {
+                a.push(i18n.xgcalendar.dateformat.Md3)
+            } else if (showday) {
+                a.push(i18n.xgcalendar.dateformat.day);
+            }
+            a.push(showweek ? " (W)" : "", showtime ? " HH:mm" : "");
             return a.join("");
         }
         function CalDateShow(startday, endday, isshowtime, isshowweek) {
             if (!endday) {
-                return startday.Format(getymformat(startday));
-            }
-            else {
-                return startday.Format(getymformat(startday, null, isshowtime, isshowweek)) + "-" + endday.Format(getymformat(endday, startday, isshowtime, isshowweek));
+                return dateFormat.call(startday, getymformat(startday,null,isshowtime));
+            } else {
+                var strstart= dateFormat.call(startday, getymformat(startday, null, isshowtime, isshowweek));
+				var strend=dateFormat.call(endday, getymformat(endday, startday, isshowtime, isshowweek));
+				var join = (strend!=""?"-":"");
+				return [strstart,strend].join(join);
             }
         }
 
@@ -1197,7 +1337,7 @@
                 if (start >= dr.startdate && start <= dr.enddate) {
                     r = true;
                 }
-                if (start.Format("yyyyMMdd") == dr.startdate.Format("yyyyMMdd") || start.Format("yyyyMMdd") == dr.enddate.Format("yyyyMMdd")) {
+                if (dateFormat.call(start, "yyyyMMdd") == dateFormat.call(dr.startdate, "yyyyMMdd") || dateFormat.call(start, "yyyyMMdd") == dateFormat.call(dr.enddate, "yyyyMMdd")) {
                     r = true;
                 }
                 if (!end)
@@ -1206,7 +1346,7 @@
                     if (end >= dr.startdate && end <= dr.enddate) {
                         r2 = true;
                     }
-                    if (end.Format("yyyyMMdd") == dr.startdate.Format("yyyyMMdd") || end.Format("yyyyMMdd") == dr.enddate.Format("yyyyMMdd")) {
+                    if (dateFormat.call(end, "yyyyMMdd") == dateFormat.call(dr.startdate, "yyyyMMdd") || dateFormat.call(end, "yyyyMMdd") == dateFormat.call(dr.enddate, "yyyyMMdd")) {
                         r2 = true;
                     }
                 }
@@ -1226,8 +1366,8 @@
                 data: "",
                 starttime: [pZero(sh), pZero(sm)].join(":"),
                 endtime: [pZero(eh), pZero(em)].join(":"),
-                content: title ? title : "新日程",
-                title: title ? title : "新日程",
+                content: title ? title : i18n.xgcalendar.new_event,
+                title: title ? title : i18n.xgcalendar.new_event,
                 icon: "<I class=\"cic cic-tmr\">&nbsp;</I>",
                 top: "0px",
                 left: "",
@@ -1305,7 +1445,10 @@
             }
             if (data != null) {
                 if (option.quickDeleteUrl != "" && data[8] == 1 && option.readonly != true) {
-                    var csbuddle = '<div id="bbit-cs-buddle" style="z-index: 180; width: 400px;visibility:hidden;" class="bubble"><table class="bubble-table" cellSpacing="0" cellPadding="0"><tbody><tr><td class="bubble-cell-side"><div id="tl1" class="bubble-corner"><div class="bubble-sprite bubble-tl"></div></div><td class="bubble-cell-main"><div class="bubble-top"></div><td class="bubble-cell-side"><div id="tr1" class="bubble-corner"><div class="bubble-sprite bubble-tr"></div></div>  <tr><td class="bubble-mid" colSpan="3"><div style="overflow: hidden" id="bubbleContent1"><div><div></div><div class="cb-root"><table class="cb-table" cellSpacing="0" cellPadding="0"><tbody><tr><td class="cb-value"><div class="textbox-fill-wrapper"><div class="textbox-fill-mid"><div id="bbit-cs-what" title="点击查看详细" class="textbox-fill-div lk" style="cursor:pointer;"></div></div></div></td></tr><tr><td class=cb-value><div id="bbit-cs-buddle-timeshow"></div></td></tr></tbody></table><div class="bbit-cs-split"><input id="bbit-cs-id" type="hidden" value=""/>[ <span id="bbit-cs-delete" class="lk">删除</span> ]&nbsp; <SPAN id="bbit-cs-editLink" class="lk">修改日程详细信息 <StrONG>»</StrONG></SPAN></div></div></div></div><tr><td><div id="bl1" class="bubble-corner"><div class="bubble-sprite bubble-bl"></div></div><td><div class="bubble-bottom"></div><td><div id="br1" class="bubble-corner"><div class="bubble-sprite bubble-br"></div></div></tr></tbody></table><div id="bubbleClose2" class="bubble-closebutton"></div><div id="prong1" class="prong"><div class=bubble-sprite></div></div></div>';
+                    var csbuddle = '<div id="bbit-cs-buddle" style="z-index: 180; width: 400px;visibility:hidden;" class="bubble"><table class="bubble-table" cellSpacing="0" cellPadding="0"><tbody><tr><td class="bubble-cell-side"><div id="tl1" class="bubble-corner"><div class="bubble-sprite bubble-tl"></div></div><td class="bubble-cell-main"><div class="bubble-top"></div><td class="bubble-cell-side"><div id="tr1" class="bubble-corner"><div class="bubble-sprite bubble-tr"></div></div>  <tr><td class="bubble-mid" colSpan="3"><div style="overflow: hidden" id="bubbleContent1"><div><div></div><div class="cb-root"><table class="cb-table" cellSpacing="0" cellPadding="0"><tbody><tr><td class="cb-value"><div class="textbox-fill-wrapper"><div class="textbox-fill-mid"><div id="bbit-cs-what" title="'
+                    	+ i18n.xgcalendar.click_to_detail + '" class="textbox-fill-div lk" style="cursor:pointer;"></div></div></div></td></tr><tr><td class=cb-value><div id="bbit-cs-buddle-timeshow"></div></td></tr></tbody></table><div class="bbit-cs-split"><input id="bbit-cs-id" type="hidden" value=""/>[ <span id="bbit-cs-delete" class="lk">'
+                    	+ i18n.xgcalendar.i_delete + '</span> ]&nbsp; <SPAN id="bbit-cs-editLink" class="lk">'
+                    	+ i18n.xgcalendar.update_detail + ' <StrONG>»</StrONG></SPAN></div></div></div></div><tr><td><div id="bl1" class="bubble-corner"><div class="bubble-sprite bubble-bl"></div></div><td><div class="bubble-bottom"></div><td><div id="br1" class="bubble-corner"><div class="bubble-sprite bubble-br"></div></div></tr></tbody></table><div id="bubbleClose2" class="bubble-closebutton"></div><div id="prong1" class="prong"><div class=bubble-sprite></div></div></div>';
                     var bud = $("#bbit-cs-buddle");
                     if (bud.length == 0) {
                         bud = $(csbuddle).appendTo(document.body);
@@ -1320,10 +1463,10 @@
                                 option.DeleteCmdhandler.call(this, data, quickd);
                             }
                             else {
-                                if (confirm("确定删除该日程吗？")) {
+                                if (confirm(i18n.xgcalendar.confirm_delete_event + "？")) {
                                     var s = 0; //0 单个事件 1，序列
                                     if (data[6] == 1) {
-                                        if (confirm("删除此序列还是单个事件？\r\n点击[确定]删除事件,点击[取消]删除序列")) {
+                                        if (confirm(i18n.xgcalendar.confrim_delete_event_or_all)) {
                                             s = 0;
                                         }
                                         else {
@@ -1339,7 +1482,7 @@
                         });
                         $("#bbit-cs-what").click(function(e) {
                             if (!option.ViewCmdhandler) {
-                                alert("参数ViewCmdhandler没有配置");
+                                alert("ViewCmdhandler" + i18n.xgcalendar.i_undefined);
                             }
                             else {
                                 if (option.ViewCmdhandler && $.isFunction(option.ViewCmdhandler)) {
@@ -1351,7 +1494,7 @@
                         });
                         lbtn.click(function(e) {
                             if (!option.EditCmdhandler) {
-                                alert("参数EditCmdhandler没有配置");
+                                alert("EditCmdhandler" + i18n.xgcalendar.i_undefined);
                             }
                             else {
                                 if (option.EditCmdhandler && $.isFunction(option.EditCmdhandler)) {
@@ -1372,15 +1515,15 @@
                     }
                     var ss = [];
                     var iscos = DateDiff("d", data[2], data[3]) != 0;
-                    ss.push(data[2].Format("M 月d 日"), " (周", __CHNUM[data[2].getDay()], ")");
+                    ss.push(dateFormat.call(data[2], i18n.xgcalendar.dateformat.Md3), " (", __WDAY[data[2].getDay()], ")");
                     if (data[4] != 1) {
-                        ss.push(",", data[2].Format("HH:mm"));
+                        ss.push(",", dateFormat.call(data[2], "HH:mm"));
                     }
 
                     if (iscos) {
-                        ss.push("-", data[3].Format("M 月d 日"), " (周", __CHNUM[data[3].getDay()], ")");
+                        ss.push("-", dateFormat.call(data[3], i18n.xgcalendar.dateformat.Md3), " (", __WDAY[data[3].getDay()], ")");
                         if (data[4] != 1) {
-                            ss.push(",", data[3].Format("HH:mm"));
+                            ss.push(",", dateFormat.call(data[3], "HH:mm"));
                         }
                     }
                     var ts = $("#bbit-cs-buddle-timeshow").html(ss.join(""));
@@ -1395,7 +1538,7 @@
                 }
                 else {
                     if (!option.ViewCmdhandler) {
-                        alert("参数ViewCmdhandler没有配置");
+                        alert("ViewCmdhandler" + i18n.xgcalendar.i_undefined);
                     }
                     else {
                         if (option.ViewCmdhandler && $.isFunction(option.ViewCmdhandler)) {
@@ -1405,7 +1548,7 @@
                 }
             }
             else {
-                alert("数据格式错误！");
+                alert(i18n.xgcalendar.data_format_error);
             }
             return false;
         }
@@ -1426,7 +1569,7 @@
             var cc = $("#cal-month-cc");
             var ccontent = $("#cal-month-cc-content table tbody");
             var ctitle = $("#cal-month-cc-title");
-            ctitle.html(day.Format("MM月dd日") + " 星期" + __CHNUM[day.getDay()]);
+            ctitle.html(dateFormat.call(day, i18n.xgcalendar.dateformat.Md3) + " " + __WDAY[day.getDay()]);
             ccontent.empty();
             //var c = tc()[2];
             var edata = $("#gridEvent").data("mvdata");
@@ -1478,8 +1621,8 @@
                 var od = data[3];
                 var zone = new Date().getTimezoneOffset() / 60 * -1;
                 var param = [{ "name": "calendarId", value: id },
-							{ "name": "CalendarStartTime", value: start.Format("yyyy-MM-dd HH:mm:ss") },
-							{ "name": "CalendarEndTime", value: end.Format("yyyy-MM-dd HH:mm:ss") },
+							{ "name": "CalendarStartTime", value: dateFormat.call(start, i18n.xgcalendar.dateformat.fulldayvalue + " HH:mm:ss") },
+							{ "name": "CalendarEndTime", value: dateFormat.call(end, i18n.xgcalendar.dateformat.fulldayvalue + " HH:mm:ss") },
 							{ "name": "timezone", value: zone }
 						   ];
                 var d;
@@ -1523,9 +1666,20 @@
             if ((!option.quickAddHandler && option.quickAddUrl == "") || option.readonly) {
                 return;
             }
-            var tempquickAddHanler = '<div id="bbit-cal-buddle" style="z-index: 180; width: 400px;visibility:hidden;" class="bubble"><table class="bubble-table" cellSpacing="0" cellPadding="0"><tbody><tr><td class="bubble-cell-side"><div id="tl1" class="bubble-corner"><div class="bubble-sprite bubble-tl"></div></div><td class="bubble-cell-main"><div class="bubble-top"></div><td class="bubble-cell-side"><div id="tr1" class="bubble-corner"><div class="bubble-sprite bubble-tr"></div></div>  <tr><td class="bubble-mid" colSpan="3"><div style="overflow: hidden" id="bubbleContent1"><div><div></div><div class="cb-root"><table class="cb-table" cellSpacing="0" cellPadding="0"><tbody><tr><th class="cb-key">时间：</th><td class=cb-value><div id="bbit-cal-buddle-timeshow"></div></td></tr><tr><th class="cb-key">内容：</th><td class="cb-value"><div class="textbox-fill-wrapper"><div class="textbox-fill-mid"><input id="bbit-cal-what" class="textbox-fill-input"/></div></div><div class="cb-example">例如：有个办公会议</div></td></tr></tbody></table><input id="bbit-cal-start" type="hidden"/><input id="bbit-cal-end" type="hidden"/><input id="bbit-cal-allday" type="hidden"/><input id="bbit-cal-quickAddBTN" value="创建日程" type="button"/>&nbsp; <SPAN id="bbit-cal-editLink" class="lk">修改日程详细信息 <StrONG>»</StrONG></SPAN></div></div></div><tr><td><div id="bl1" class="bubble-corner"><div class="bubble-sprite bubble-bl"></div></div><td><div class="bubble-bottom"></div><td><div id="br1" class="bubble-corner"><div class="bubble-sprite bubble-br"></div></div></tr></tbody></table><div id="bubbleClose1" class="bubble-closebutton"></div><div id="prong2" class="prong"><div class=bubble-sprite></div></div></div>';
             var buddle = $("#bbit-cal-buddle");
             if (buddle.length == 0) {
+                var temparr = [];
+                temparr.push('<div id="bbit-cal-buddle" style="z-index: 180; width: 400px;visibility:hidden;" class="bubble">');
+                temparr.push('<table class="bubble-table" cellSpacing="0" cellPadding="0"><tbody><tr><td class="bubble-cell-side"><div id="tl1" class="bubble-corner"><div class="bubble-sprite bubble-tl"></div></div>');
+                temparr.push('<td class="bubble-cell-main"><div class="bubble-top"></div><td class="bubble-cell-side"><div id="tr1" class="bubble-corner"><div class="bubble-sprite bubble-tr"></div></div>  <tr><td class="bubble-mid" colSpan="3"><div style="overflow: hidden" id="bubbleContent1"><div><div></div><div class="cb-root">');
+                temparr.push('<table class="cb-table" cellSpacing="0" cellPadding="0"><tbody><tr><th class="cb-key">');
+                temparr.push(i18n.xgcalendar.time, '：</th><td class=cb-value><div id="bbit-cal-buddle-timeshow"></div></td></tr><tr><th class="cb-key">');
+                temparr.push(i18n.xgcalendar.content, '：</th><td class="cb-value"><div class="textbox-fill-wrapper"><div class="textbox-fill-mid"><input id="bbit-cal-what" class="textbox-fill-input"/></div></div><div class="cb-example">');
+                temparr.push(i18n.xgcalendar.example, '</div></td></tr></tbody></table><input id="bbit-cal-start" type="hidden"/><input id="bbit-cal-end" type="hidden"/><input id="bbit-cal-allday" type="hidden"/><input id="bbit-cal-quickAddBTN" value="');
+                temparr.push(i18n.xgcalendar.create_event, '" type="button"/>&nbsp; <SPAN id="bbit-cal-editLink" class="lk">');
+                temparr.push(i18n.xgcalendar.update_detail, ' <StrONG>»</StrONG></SPAN></div></div></div><tr><td><div id="bl1" class="bubble-corner"><div class="bubble-sprite bubble-bl"></div></div><td><div class="bubble-bottom"></div><td><div id="br1" class="bubble-corner"><div class="bubble-sprite bubble-br"></div></div></tr></tbody></table><div id="bubbleClose1" class="bubble-closebutton"></div><div id="prong2" class="prong"><div class=bubble-sprite></div></div></div>');
+                var tempquickAddHanler = temparr.join("");
+                temparr = null;
                 $(document.body).append(tempquickAddHanler);
                 buddle = $("#bbit-cal-buddle");
                 var calbutton = $("#bbit-cal-quickAddBTN");
@@ -1545,7 +1699,7 @@
                     var allday = $("#bbit-cal-allday").val();
                     var f = /^[^\$\<\>]+$/.test(what);
                     if (!f) {
-                        alert("日程标题不能为空且不能包含符号($<>)");
+                        alert(i18n.xgcalendar.invalid_title);
                         $("#bbit-cal-what").focus();
                         option.isloading = false;
                         return false;
@@ -1557,11 +1711,11 @@
 						{ "name": "IsAllDayEvent", value: allday },
 						{ "name": "timezone", value: zone}];
 
-					if (option.extParam) {
-						for (var pi = 0; pi < option.extParam.length; pi++) {
-							param[param.length] = option.extParam[pi];
-						}
-					}
+                    if (option.extParam) {
+                        for (var pi = 0; pi < option.extParam.length; pi++) {
+                            param[param.length] = option.extParam[pi];
+                        }
+                    }
 
                     if (option.quickAddHandler && $.isFunction(option.quickAddHandler)) {
                         option.quickAddHandler.call(this, param);
@@ -1605,7 +1759,7 @@
                 });
                 lbtn.click(function(e) {
                     if (!option.EditCmdhandler) {
-                        alert("参数EditCmdhandler没有配置");
+                        alert("EditCmdhandler" + i18n.xgcalendar.i_undefined);
                     }
                     else {
                         if (option.EditCmdhandler && $.isFunction(option.EditCmdhandler)) {
@@ -1618,7 +1772,7 @@
                 });
                 buddle.mousedown(function(e) { return false });
             }
-
+			
             var dateshow = CalDateShow(start, end, !isallday, true);
             var off = getbuddlepos(pos.left, pos.top);
             if (off.hide) {
@@ -1630,8 +1784,8 @@
             $("#bbit-cal-buddle-timeshow").html(dateshow);
             var calwhat = $("#bbit-cal-what").val("");
             $("#bbit-cal-allday").val(isallday ? "1" : "0");
-            $("#bbit-cal-start").val(start.Format("yyyy-MM-dd HH:mm"));
-            $("#bbit-cal-end").val(end.Format("yyyy-MM-dd HH:mm"));
+            $("#bbit-cal-start").val(dateFormat.call(start, i18n.xgcalendar.dateformat.fulldayvalue + " HH:mm"));
+            $("#bbit-cal-end").val(dateFormat.call(end, i18n.xgcalendar.dateformat.fulldayvalue + " HH:mm"));
             buddle.css({ "visibility": "visible", left: off.left, top: off.top });
             calwhat.focus();
             $(document).one("mousedown", function() {
@@ -1640,16 +1794,19 @@
             });
             return false;
         }
-        //format yyyy-MM-dd HH:ss to Date Type
+        //format datestring to Date Type
         function strtodate(str) {
+
             var arr = str.split(" ");
-            var arr2 = arr[0].split("-");
+            var arr2 = arr[0].split(i18n.xgcalendar.dateformat.separator);
             var arr3 = arr[1].split(":");
-            var m = arr2[1].indexOf("0") == 0 ? arr2[1].substr(1, 1) : arr2[1];
-            var d = arr2[2].indexOf("0") == 0 ? arr2[2].substr(1, 1) : arr2[2];
+
+            var y = arr2[i18n.xgcalendar.dateformat.year_index];
+            var m = arr2[i18n.xgcalendar.dateformat.month_index].indexOf("0") == 0 ? arr2[i18n.xgcalendar.dateformat.month_index].substr(1, 1) : arr2[i18n.xgcalendar.dateformat.month_index];
+            var d = arr2[i18n.xgcalendar.dateformat.day_index].indexOf("0") == 0 ? arr2[i18n.xgcalendar.dateformat.day_index].substr(1, 1) : arr2[i18n.xgcalendar.dateformat.day_index];
             var h = arr3[0].indexOf("0") == 0 ? arr3[0].substr(1, 1) : arr3[0];
             var n = arr3[1].indexOf("0") == 0 ? arr3[1].substr(1, 1) : arr3[1];
-            return new Date(arr2[0], parseInt(m) - 1, d, h, n);
+            return new Date(y, parseInt(m) - 1, d, h, n);
         }
 
         function rebyKey(key, remove) {
@@ -1727,7 +1884,7 @@
                 var $dvwkcontaienr = $("#dvwkcontaienr");
                 var $dvtec = $("#dvtec");
                 if ($dvwkcontaienr.length == 0 || $dvtec.length == 0) {
-                    alert("视图未准备就绪"); return;
+                    alert(i18n.xgcalendar.view_no_ready); return;
                 }
                 var dvwkH = $dvwkcontaienr.height() + 2;
                 var calH = option.height - 8 - dvwkH;
@@ -1793,7 +1950,7 @@
 
                 if (viewtype == "week") {
                     $("#dvwkcontaienr th.gcweekname").each(function(i) {
-                        $(this).click(weektoday);
+                        $(this).click(weekormonthtoday);
                     });
                 }
 
@@ -2181,7 +2338,7 @@
                                 var w1 = d.dp > 1 ? (d.pw - 4) * 1.5 : (d.pw - 4);
                                 var cp = d.target.clone();
                                 if (d.dp > 1) {
-                                    cp.find("div.rb-i>span").prepend("(" + d.dp + "天)&nbsp;");
+                                    cp.find("div.rb-i>span").prepend("(" + d.dp + " " + i18n.xgcalendar.day_plural + ")&nbsp;");
                                 }
                                 var cpwrap = $("<div class='drag-event st-contents' style='width:" + w1 + "px'/>").append(cp).appendTo(document.body);
                                 d.cpwrap = cpwrap;
@@ -2209,7 +2366,7 @@
                                 var w1 = d.dp > 1 ? (d.pw - 4) * 1.5 : (d.pw - 4);
                                 var cp = d.target.clone();
                                 if (d.dp > 1) {
-                                    cp.find("div.rb-i>span").prepend("(" + d.dp + "天)&nbsp;");
+                                    cp.find("div.rb-i>span").prepend("(" + d.dp + " " + i18n.xgcalendar.day_plural + ")&nbsp;");
                                 }
                                 var cpwrap = $("<div class='drag-event st-contents' style='width:" + w1 + "px'/>").append(cp).appendTo(document.body);
                                 d.cpwrap = cpwrap;
@@ -2252,10 +2409,16 @@
                         _dragevent = function() { $("#" + wrapid).remove(); $("#bbit-cal-buddle").css("visibility", "hidden"); };
                         quickadd(start, end, false, pos);
                         break;
-                    case 2: //周日视图添加日程						
-                    case 3: //月视图添加日程
+                    case 2: //周日视图添加日程
+                    case 3: //月视图添加日程					
+                        var source = e.srcElement || e.target;                       
                         var lassoid = new Date().getTime();
                         if (!d.lasso) {
+							 if ($(source).hasClass("monthdayshow"))
+							{
+								weekormonthtoday.call($(source).parent()[0],e);
+								break;
+							}
                             d.fdi = d.sdi = getdi(d.xa, d.ya, d.sx, d.sy);
                             d.lasso = $("<div style='z-index: 10; display: block' class='drag-lasso-container'/>");
                             $(document.body).append(d.lasso);

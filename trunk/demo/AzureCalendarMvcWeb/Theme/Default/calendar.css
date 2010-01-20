@@ -668,3 +668,11 @@ border-bottom:2px solid #c3d9ff;
 .prong .bubble-sprite {
 	TOP: -24px; LEFT: -50px
 }
+.monthdayshow
+{
+    cursor:pointer;
+}
+.monthdayshow:hover
+{
+    text-decoration:underline;
+}

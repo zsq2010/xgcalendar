@@ -149,6 +149,11 @@ span.english
     padding-left:20px;
 	background: url(../../images/icons/us.gif)  no-repeat 1px 50%;
 }
+span.english_au
+{
+    padding-left:20px;
+	background: url(../../images/icons/au.gif)  no-repeat 1px 50%;
+}
 span.showmonthview
 {
     padding-left:20px;

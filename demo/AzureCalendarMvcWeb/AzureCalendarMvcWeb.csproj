@@ -77,6 +77,16 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
+    <Compile Include="App_GlobalResources\lang.en-AU.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>lang.en-AU.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\lang.en-US.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>lang.en-US.resx</DependentUpon>
+    </Compile>
     <Compile Include="App_GlobalResources\lang.zh-CN.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -265,11 +275,11 @@
   <ItemGroup>
     <Content Include="App_GlobalResources\lang.en-AU.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>lang.en-AU1.designer.cs</LastGenOutput>
+      <LastGenOutput>lang.en-AU.designer.cs</LastGenOutput>
     </Content>
     <Content Include="App_GlobalResources\lang.en-US.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>lang.en-US1.designer.cs</LastGenOutput>
+      <LastGenOutput>lang.en-US.designer.cs</LastGenOutput>
     </Content>
     <Content Include="Javascripts\Plugins\datepicker_lang_en_AU.js" />
     <Content Include="Javascripts\Plugins\xgcalendar_lang_en_AU.js" />

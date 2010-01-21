@@ -200,8 +200,8 @@
                     }
                 }
             };
-            $.validator.addMethod("date", function(value, element) {               
-                 var arrs = value.split(i18n.datepicker.dateformat.separator);
+            $.validator.addMethod("date", function(value, element) {                             
+                var arrs = value.split(i18n.datepicker.dateformat.separator);
                 var year = arrs[i18n.datepicker.dateformat.year_index];
                 var month = arrs[i18n.datepicker.dateformat.month_index];
                 var day = arrs[i18n.datepicker.dateformat.day_index];

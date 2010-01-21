@@ -64,6 +64,9 @@
             <div id="changetoenglish" class="fbutton">
                 <div><span title='<%=Html.Resource("lang,english")%>' class="english"><%=Html.Resource("lang,english")%></span></div>
             </div>
+             <div id="changetoenglishau" class="fbutton">
+                <div><span title='<%=Html.Resource("lang,english")%>' class="english_au"><%=Html.Resource("lang,english")%></span></div>
+            </div>
             <div class="clear"></div>
             </div>
       </div>
@@ -84,7 +87,7 @@
         </div>
      
   </div>
-    <script src="<%=Url.Content("~/Javascripts/jquery.js")%>" type="text/javascript"></script>  
+    <script src="<%=Url.Content("~/Javascripts/jquery.min.js")%>" type="text/javascript"></script>  
     <script src="<%=Url.Content("~/Javascripts/Common.js")%>" type="text/javascript"></script>    
     <script src="<%=Url.Content("~/Javascripts/lib/blackbird.js")%>" type="text/javascript"></script> 
     <script src="<%=Url.Content(Html.Resource("lang,datepicker_langpack_url"))%>" type="text/javascript"></script>     
@@ -285,6 +288,10 @@
             $("#changetoenglish").click(function(e){
                 location.href="<%=Url.Action("Setlang", "Home", new {lang="en-US" })%>";
             });
+             $("#changetoenglishau").click(function(e){
+                location.href="<%=Url.Action("Setlang", "Home", new {lang="en-AU" })%>";
+            });
+            
         });
     </script>
     

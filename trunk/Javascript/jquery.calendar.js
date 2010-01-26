@@ -1,5 +1,5 @@
 ﻿/*
- * XgCalendar v1.2.0.0
+ * XgCalendar  v1.2.0.1
  * Base on jQuery 1.2.6+
  * http://xuanye.cnblogs.com/
  *
@@ -409,7 +409,6 @@
             var fE = [];
             var deB = aDE;
             var deA = sDE;
-            //debugger;
             for (var j = 0; j < el; j++) {
                 var sD = events[j][2];
                 var eD = events[j][3];
@@ -1094,15 +1093,17 @@
                         param[param.length] = option.extParam[pi];
                     }
                 }
+				
                 $.ajax({
                     type: option.method, //
                     url: option.url,
-                    data: param,
+                    data: param,				   
+			        //dataType: "text",  // fixed jquery 1.4 not support Ms Date Json Format /Date(@Tickets)/
                     dataType: "json",
-                    dataFilter: function(data, type) {
-                        return data.replace(/"\\\/(Date\([0-9-]+\))\\\/"/gi, 'new $1');
-                    },
-                    success: function(data) {
+                    dataFilter: function(data, type) { return data.replace(/"\\\/(Date\([0-9-]+\))\\\/"/gi, "new $1");},
+                    success: function(data) {//function(datastr) {									
+						//datastr =datastr.replace(/"\\\/(Date\([0-9-]+\))\\\/"/gi, 'new $1');						
+                        //var data = (new Function("return " + datastr))();
                         if (data != null && data.error != null) {
                             if (option.onRequestDataError) {
                                 option.onRequestDataError(1, data);
@@ -1117,8 +1118,8 @@
                         }
                         option.isloading = false;
                     },
-                    error: function(data) {
-                        try {
+                    error: function(data) {	
+						try {							
                             if (option.onRequestDataError) {
                                 option.onRequestDataError(1, data);
                             } else {
@@ -1184,7 +1185,6 @@
                     option.eventItems = events;
                 }
                 else {
-                    //debugger;
                     //清理重复
                     clearrepeat(events, start, end);
                     var l = events.length;
@@ -1773,7 +1773,7 @@
                 buddle.mousedown(function(e) { return false });
             }
 			
-            var dateshow = CalDateShow(start, end, !isallday, true);
+            var dateshow = CalDateShow(start, end, !isallday, true);			
             var off = getbuddlepos(pos.left, pos.top);
             if (off.hide) {
                 $("#prong2").hide()
@@ -1786,8 +1786,8 @@
             $("#bbit-cal-allday").val(isallday ? "1" : "0");
             $("#bbit-cal-start").val(dateFormat.call(start, i18n.xgcalendar.dateformat.fulldayvalue + " HH:mm"));
             $("#bbit-cal-end").val(dateFormat.call(end, i18n.xgcalendar.dateformat.fulldayvalue + " HH:mm"));
-            buddle.css({ "visibility": "visible", left: off.left, top: off.top });
-            calwhat.focus();
+            buddle.css({ "visibility": "visible", left: off.left, top: off.top });			
+			calwhat.blur().focus(); //add 2010-01-26 blur() fixed chrome 
             $(document).one("mousedown", function() {
                 $("#bbit-cal-buddle").css("visibility", "hidden");
                 realsedragevent();

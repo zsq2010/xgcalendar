@@ -7,12 +7,30 @@
  }
 
 .toolBotton
+{	
+    border: none;
+	border-bottom:#99bbe8 1px solid;
+	background: #ccc url(images/share/tbg.gif) repeat-x 50% top;
+	overflow: hidden;	
+	position: relative;
+	height: 25px;
+	padding:0;
+	margin:0;
+}
+.toolBotton a
 {
-	background-position: left -2px;
-	width: 100%;
-	padding: 4px 0px 4px 0px;
-	background: url(  "../../images/bgs/ch.gif" ) repeat-x left 
- }
+    display:block;
+    width:auto;
+    cursor:pointer;
+}
+.toolBotton a span
+{
+    float: left;
+    display:block;
+    width:auto;
+    cursor:pointer;
+}
+
 body
 {
 	margin: 0;
@@ -180,14 +198,6 @@ span.showdayflash
     padding-left:20px;
     background:url("../../images/icons/date_reflash.png") no-repeat 1px 50%;
 }
-.toolBotton
-{
-	background-position: left -2px;
-	width: 100%;
-	padding: 4px 0px 4px 0px;
-	background: url(  "../../images/bgs/ch.gif" ) repeat-x left -2px;
-	text-align: left;	
-}
 .size1
 {
     width:50px;    
@@ -230,8 +240,7 @@ span.showdayflash
 {
     display:none;        
 }
-
-   /* JQuery Validation */
+/* JQuery Validation */
 label.error
 {
     padding: 2px 0 2px 20px;           

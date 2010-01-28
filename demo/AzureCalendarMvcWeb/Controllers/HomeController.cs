@@ -17,6 +17,10 @@ namespace AzureCalendarMvcWeb.Controllers
         {          
             return View();
         }
+        public ActionResult Test()
+        {
+            return View();
+        }
 
         public ActionResult SetLang(string lang)
         {

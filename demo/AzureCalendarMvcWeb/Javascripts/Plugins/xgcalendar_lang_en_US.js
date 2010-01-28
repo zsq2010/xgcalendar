@@ -1,7 +1,7 @@
 var i18n = $.extend({}, i18n || {}, {
     xgcalendar: {
         dateformat: {
-            "fulldaykey": "ddMMyyyy",
+            "fulldaykey": "MMddyyyy",
             "fulldayshow": "L d yyyy",
             "fulldayvalue": "M/d/yyyy",
             "Md": "W M/d",

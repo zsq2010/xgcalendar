@@ -95,7 +95,7 @@
     <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.alert.js")%>" type="text/javascript"></script>    
     <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.ifrmdailog.js")%>" defer="defer" type="text/javascript"></script>
     <script src="<%=Url.Content(Html.Resource("lang,calendar_langpack_url"))%>" type="text/javascript"></script>  
-    <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.calendar.encode.js?v=1.5")%>" type="text/javascript"></script>   
+    <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.calendar.min.js?v=1.2.0.2")%>" type="text/javascript"></script>   
     <script type="text/javascript">
         $(document).ready(function() {
             //[id,title,start,end，全天日程，跨日日程,循环日程,theme,'','']          

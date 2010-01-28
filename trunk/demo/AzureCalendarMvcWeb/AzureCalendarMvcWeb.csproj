@@ -77,11 +77,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Include="App_GlobalResources\lang.en-AU.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>lang.en-AU.resx</DependentUpon>
-    </Compile>
     <Compile Include="App_GlobalResources\lang.en-US.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -91,6 +86,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>lang.zh-CN.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\lang.en-AU.designer.cs">
+      <DependentUpon>lang.en-AU.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CMController.cs" />
@@ -187,7 +187,6 @@
     <Content Include="Javascripts\Plugins\jquery.alert.js" />
     <Content Include="Javascripts\Plugins\jquery.colorselect.js" />
     <Content Include="Javascripts\Plugins\jquery.datepicker.js" />
-    <Content Include="Javascripts\Plugins\jquery.calendar.encode.js" />
     <Content Include="Javascripts\Plugins\jquery.dropdown.js" />
     <Content Include="Javascripts\Plugins\jquery.form.js" />
     <Content Include="Javascripts\Plugins\jquery.ifrmdailog.js" />
@@ -259,30 +258,39 @@
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_GlobalResources\lang.en-US.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>lang.en-US.designer.cs</LastGenOutput>
+    </Content>
     <Content Include="App_GlobalResources\lang.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>lang.Designer.cs</LastGenOutput>
     </Content>
     <Content Include="Images\icons\cn.gif" />
     <Content Include="Images\icons\us.gif" />
+    <Content Include="Javascripts\jquery-1.4.js" />
+    <Content Include="Javascripts\jquery-1.4.min.js" />
     <Content Include="Javascripts\Plugins\datepicker_lang_en_US.js" />
     <Content Include="Javascripts\Plugins\datepicker_lang_zh_Cn.js" />
     <Content Include="App_GlobalResources\lang.zh-CN.resx">
       <LastGenOutput>lang.zh-CN.Designer.cs</LastGenOutput>
       <Generator>GlobalResourceProxyGenerator</Generator>
     </Content>
+    <Content Include="Javascripts\Plugins\datepicker_lang_en_AU.js" />
+    <Content Include="Javascripts\Plugins\xgcalendar_lang_en_AU.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_GlobalResources\lang.en-AU.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>lang.en-AU.designer.cs</LastGenOutput>
     </Content>
-    <Content Include="App_GlobalResources\lang.en-US.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>lang.en-US.designer.cs</LastGenOutput>
-    </Content>
-    <Content Include="Javascripts\Plugins\datepicker_lang_en_AU.js" />
-    <Content Include="Javascripts\Plugins\xgcalendar_lang_en_AU.js" />
+    <Content Include="Images\icons\au.gif" />
+    <Content Include="Javascripts\lib\jquery.easydrag.js" />
+    <Content Include="Javascripts\Plugins\jquery.calendar.min.js" />
+    <Content Include="Theme\Default\images\dailog\left-corners.png" />
+    <Content Include="Theme\Default\images\dailog\left-right.png" />
+    <Content Include="Theme\Default\images\dailog\right-corners.png" />
+    <Content Include="Theme\Default\images\share\tbg.gif" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -302,7 +310,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>1697</DevelopmentServerPort>
+          <DevelopmentServerPort>19429</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

@@ -1,5 +1,5 @@
 ﻿/*
- * XgCalendar  v1.2.0.2
+ * XgCalendar  v1.2.0.3
  * Base on jQuery 1.2.6+
  * http://xuanye.cnblogs.com/
  *
@@ -698,7 +698,7 @@
             eventshow = event[1];
             var startformat = getymformat(event[2], null, showtime, true);
             var endformat = getymformat(event[3], event[2], showtime, true);
-            timeshow = dateFormat.call(event[2], startformat) + "-" + dateFormat.call(event[3], endformat);
+            timeshow = dateFormat.call(event[2], startformat) + " - " + dateFormat.call(event[3], endformat);
             locationshow = (event[9] != undefined && event[9] != "") ? event[9] : i18n.xgcalendar.i_undefined;
             attendsshow = (event[10] != undefined && event[10] != "") ? event[10] : "";
             var ret = [];
@@ -1311,7 +1311,7 @@
             } else {
                 var strstart= dateFormat.call(startday, getymformat(startday, null, isshowtime, isshowweek));
 				var strend=dateFormat.call(endday, getymformat(endday, startday, isshowtime, isshowweek));
-				var join = (strend!=""?"-":"");
+				var join = (strend!=""? " - ":"");
 				return [strstart,strend].join(join);
             }
         }
@@ -1463,7 +1463,7 @@
                                 option.DeleteCmdhandler.call(this, data, quickd);
                             }
                             else {
-                                if (confirm(i18n.xgcalendar.confirm_delete_event + "？")) {
+                                if (confirm(i18n.xgcalendar.confirm_delete_event + "?")) {
                                     var s = 0; //0 单个事件 1，序列
                                     if (data[6] == 1) {
                                         if (confirm(i18n.xgcalendar.confrim_delete_event_or_all)) {
@@ -1521,7 +1521,7 @@
                     }
 
                     if (iscos) {
-                        ss.push("-", dateFormat.call(data[3], i18n.xgcalendar.dateformat.Md3), " (", __WDAY[data[3].getDay()], ")");
+                        ss.push(" - ", dateFormat.call(data[3], i18n.xgcalendar.dateformat.Md3), " (", __WDAY[data[3].getDay()], ")");
                         if (data[4] != 1) {
                             ss.push(",", dateFormat.call(data[3], "HH:mm"));
                         }
@@ -2615,7 +2615,7 @@
                 render();
                 dochange();
             },
-            nt: function() {
+            nt: function() {				
                 switch (option.view) {
                     case "day":
                         option.showday = DateAdd("d", 1, option.showday);
@@ -2624,7 +2624,13 @@
                         option.showday = DateAdd("w", 1, option.showday);
                         break;
                     case "month":
-                        option.showday = DateAdd("m", 1, option.showday);
+						var od = option.showday.getDate();
+						option.showday = DateAdd("m", 1, option.showday);
+						var nd = option.showday.getDate();
+						if(od !=nd) //如果日期不相等则，说明进了一月
+						{
+							option.showday= DateAdd("d", 0-nd, option.showday); //上一月的最后一天
+						}
                         break;
                 }
                 render();

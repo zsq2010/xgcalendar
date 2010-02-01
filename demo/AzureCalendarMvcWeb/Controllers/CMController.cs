@@ -31,24 +31,30 @@ namespace AzureCalendarMvcWeb.Controllers
             return View(calendar);
         }
 
-        public ActionResult EditCalendar(int? id, DateTime? start,DateTime? end, int? isallday)
+        public ActionResult EditCalendar(int? id, string start,string end, int? isallday)
         {
             int p = 60 - DateTime.Now.Minute;
             if (p >30) p = p-30;
             DateTime now = DateTime.Now.AddMinutes(p);
-            Calendar calendar = id.HasValue && id > 0 ? _service.GetCalendar(id.Value) : new Calendar() { 
-                StartTime= start.HasValue?start.Value:now,
-                EndTime = end.HasValue ? end.Value : now.AddHours(1),
-                IsAllDayEvent = isallday.HasValue && isallday.Value == 1
-            };
+            Calendar calendar;
+
             if (id.HasValue && id > 0)
             {
-                int clientzone = calendar.MasterId.HasValue?calendar.MasterId.Value:8;
+                calendar = _service.GetCalendar(id.Value);
+                int clientzone = calendar.MasterId.HasValue ? calendar.MasterId.Value : 8;
                 int serverzone = TimeHelper.GetTimeZone();
                 var zonediff = clientzone - serverzone;
                 //时区转换
                 calendar.StartTime = calendar.StartTime.AddHours(zonediff);
                 calendar.EndTime = calendar.EndTime.AddHours(zonediff);
+            }
+            else
+            {
+                calendar = new Calendar();
+                calendar.StartTime = Convert.ToDateTime(start);
+                calendar.EndTime = Convert.ToDateTime(end);
+                calendar.IsAllDayEvent = isallday.HasValue && isallday.Value == 1;
+              
             }
             return View(calendar);
         }

@@ -29,7 +29,9 @@
         },
         ok: " Ok ",
         cancel: "Cancel",
-        today: "Today"
+        today: "Today",
+        prev_month_title: "prev month",
+        next_month_title: "next month"
     }
 });
 

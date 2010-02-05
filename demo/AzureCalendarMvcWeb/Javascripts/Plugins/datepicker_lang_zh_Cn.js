@@ -29,7 +29,9 @@
         },
         ok: " 确定 ",
         cancel: " 取消 ",
-        today: "今天"
+        today: "今天",
+        prev_month_title:"上一月",
+        next_month_title:"下一月"
     }
 });
 

@@ -42,4 +42,7 @@ Subsonic 相关问题 http://Subsonicproject.com/
 17：替换了若干中文符号为因为符号。 
 
 2010-02-01
-19: 修正了在en-US语言环境下MVC 自动转换URL 参数日期格式到Datetime类型的转换错误
+19: 修正了在en-US语言环境下MVC 自动转换URL 参数日期格式到Datetime类型的转换错误 
+
+2010-02-05 
+20: 修正了datepicker的几处中文硬编码

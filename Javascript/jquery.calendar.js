@@ -1621,8 +1621,8 @@
                 var od = data[3];
                 var zone = new Date().getTimezoneOffset() / 60 * -1;
                 var param = [{ "name": "calendarId", value: id },
-							{ "name": "CalendarStartTime", value: dateFormat.call(start, i18n.xgcalendar.dateformat.fulldayvalue + " HH:mm:ss") },
-							{ "name": "CalendarEndTime", value: dateFormat.call(end, i18n.xgcalendar.dateformat.fulldayvalue + " HH:mm:ss") },
+							{ "name": "CalendarStartTime", value: dateFormat.call(start, i18n.xgcalendar.dateformat.fulldayvalue + " HH:mm") },
+							{ "name": "CalendarEndTime", value: dateFormat.call(end, i18n.xgcalendar.dateformat.fulldayvalue + " HH:mm") },
 							{ "name": "timezone", value: zone }
 						   ];
                 var d;

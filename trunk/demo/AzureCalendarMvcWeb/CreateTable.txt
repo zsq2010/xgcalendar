@@ -1,123 +1,143 @@
-﻿/*
-	在此之前你必须已经创建了数据库了哦	
-*/
+﻿if exists (select 1
+            from  sysobjects
+           where  id = object_id('dbo.Calendars')
+            and   type = 'U')
+   drop table dbo.Calendars
+go
 
-USE [AzureCalendar]
-GO
+/*==============================================================*/
+/* Table: Calendars                                             */
+/*==============================================================*/
+create table dbo.Calendars (
+   Id                   int                  identity(1, 1),
+   Subject              nvarchar(1000)       collate Chinese_PRC_CI_AS null,
+   Location             nvarchar(200)        collate Chinese_PRC_CI_AS null,
+   MasterId             int                  null,
+   Description          nvarchar(255)        collate Chinese_PRC_CI_AS null,
+   CalendarType         int                  not null
+      constraint CKC_CALENDARTYPE_CALENDAR check (CalendarType in (1,2)),
+   StartTime            datetime             not null,
+   EndTime              datetime             not null,
+   IsAllDayEvent        bit                  not null,
+   HasAttachment        bit                  not null,
+   Category             nvarchar(200)        null,
+   InstanceType         int                  not null
+      constraint CKC_INSTANCETYPE_CALENDAR check (InstanceType in (0,1,2,3,4)),
+   Attendees            nvarchar(255)        collate Chinese_PRC_CI_AS null,
+   AttendeeNames        nvarchar(255)        collate Chinese_PRC_CI_AS null,
+   OtherAttendee        nvarchar(255)        collate Chinese_PRC_CI_AS null,
+   UPAccount            nvarchar(50)         collate Chinese_PRC_CI_AS not null,
+   UPName               nvarchar(50)         collate Chinese_PRC_CI_AS not null,
+   UPTime               datetime             not null,
+   RecurringRule        nvarchar(500)        null,
+   constraint PK_Calendar primary key (Id)
+)
+go
 
-/****** Object:  Table [dbo].[Calendar]    Script Date: 11/24/2009 10:54:48 ******/
-SET ANSI_NULLS ON
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '日程表',
+   'user', 'dbo', 'table', 'Calendars'
+go
 
-SET QUOTED_IDENTIFIER ON
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '主键标识自增',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'Id'
+go
 
-CREATE TABLE [dbo].[Calendar](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Subject] [nvarchar](1000) NULL,
-	[Location] [nvarchar](200) NULL,
-	[MasterId] [int] NULL,
-	[Description] [nvarchar](255) NULL,
-	[CalendarType] [int] NOT NULL,
-	[StartTime] [datetime] NOT NULL,
-	[EndTime] [datetime] NOT NULL,
-	[IsAllDayEvent] [bit] NOT NULL,
-	[HasAttachment] [bit] NOT NULL,
-	[Category] [nvarchar](200) NULL,
-	[InstanceType] [int] NOT NULL,
-	[Attendees] [nvarchar](255) NULL,
-	[AttendeeNames] [nvarchar](255) NULL,
-	[OtherAttendee] [nvarchar](255) NULL,
-	[UPAccount] [nvarchar](50) NOT NULL,
-	[UPName] [nvarchar](50) NOT NULL,
-	[UPTime] [datetime] NOT NULL,
-	[RecurringRule] [nvarchar](500) NULL,
- CONSTRAINT [PK_Calendar] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
+execute sp_addextendedproperty 'MS_Description', 
+   '标题',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'Subject'
+go
 
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '地点',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'Location'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'主键标识自增' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'Id'
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '循环主日程Id',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'MasterId'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'标题' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'Subject'
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '描述',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'Description'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'地点' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'Location'
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'循环主日程Id' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'MasterId'
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'描述' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'Description'
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'日程的类型
+execute sp_addextendedproperty 'MS_Description', 
+   '日程的类型
    1	UserCalendar（个人日程）
    2	DeptCalendar（部门日程）
-   ' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'CalendarType'
-GO
+   ',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'CalendarType'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'开始时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'StartTime'
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '开始时间',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'StartTime'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'结束时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'EndTime'
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '结束时间',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'EndTime'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否全天日程' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'IsAllDayEvent'
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '是否全天日程',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'IsAllDayEvent'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否有附件' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'HasAttachment'
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '是否有附件',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'HasAttachment'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'类别' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'Category'
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '类别',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'Category'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'实例类型(周期类型)
+execute sp_addextendedproperty 'MS_Description', 
+   '实例类型(周期类型)
    0	Single（一般日程）
    1	Master（循环主日程）
    2	Instance（循环实例日程）
    3	Exception （错误）
-   4	MeetingRequest（会议安排）' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'InstanceType'
-GO
+   4	MeetingRequest（会议安排）',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'InstanceType'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'参与人帐号或者邮件，多个' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'Attendees'
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '参与人帐号或者邮件，多个',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'Attendees'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'参与人姓名，多个' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'AttendeeNames'
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '参与人姓名，多个',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'AttendeeNames'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'其他参与人，填入邮件' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'OtherAttendee'
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '其他参与人，填入邮件',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'OtherAttendee'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最后一个修改人账号' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'UPAccount'
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '最后一个修改人账号',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'UPAccount'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最后一个修改人名称' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'UPName'
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '最后一个修改人名称',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'UPName'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最后一次修改时间' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'UPTime'
-GO
+execute sp_addextendedproperty 'MS_Description', 
+   '最后一次修改时间',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'UPTime'
+go
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'循环规则' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar', @level2type=N'COLUMN',@level2name=N'RecurringRule'
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'日程表' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Calendar'
-GO
-
-ALTER TABLE [dbo].[Calendar]  WITH CHECK ADD  CONSTRAINT [CKC_CALENDARTYPE_CALENDAR] CHECK  (([CalendarType]=(2) OR [CalendarType]=(1)))
-GO
-
-ALTER TABLE [dbo].[Calendar] CHECK CONSTRAINT [CKC_CALENDARTYPE_CALENDAR]
-GO
-
-ALTER TABLE [dbo].[Calendar]  WITH CHECK ADD  CONSTRAINT [CKC_INSTANCETYPE_CALENDAR] CHECK  (([InstanceType]=(4) OR [InstanceType]=(3) OR [InstanceType]=(2) OR [InstanceType]=(1) OR [InstanceType]=(0)))
-GO
-
-ALTER TABLE [dbo].[Calendar] CHECK CONSTRAINT [CKC_INSTANCETYPE_CALENDAR]
-GO
-
-
+execute sp_addextendedproperty 'MS_Description', 
+   '循环规则',
+   'user', 'dbo', 'table', 'Calendars', 'column', 'RecurringRule'
+go

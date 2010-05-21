@@ -9,7 +9,7 @@ namespace AzureCalendarMvcWeb.Models
     public class CalendarService:ICalendarService
     {
 
-        private SimpleRepository _rep = new SimpleRepository("AzureCalendarDb", SimpleRepositoryOptions.None);
+        private SimpleRepository _rep = new SimpleRepository("AzureCalendarDb", SimpleRepositoryOptions.Default);
         #region ICalendarRepository 成员
 
         public int UpdateCalendar(Calendar data)

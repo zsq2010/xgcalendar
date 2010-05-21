@@ -25,13 +25,13 @@
             "oct": "十",
             "nov": "十一",
             "dec": "十二",
-            "postfix":"月"
+            "postfix": "月"
         },
         ok: " 确定 ",
         cancel: " 取消 ",
         today: "今天",
-        prev_month_title:"上一月",
-        next_month_title:"下一月"
+        prev_month_title: "上一月",
+        next_month_title: "下一月"
     }
 });
 

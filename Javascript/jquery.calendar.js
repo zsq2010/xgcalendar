@@ -1228,8 +1228,8 @@
             option.showday = strtodate(daystr + " 00:00");
             option.view = "day";
             render();
-            if (option.onweekormonthtoday) {
-                option.onweekormonthtoday(option);
+            if (option.onWeekOrMonthToDay) {
+                option.onWeekOrMonthToDay(option);
             }
             return false;
         }

@@ -1,5 +1,5 @@
 ﻿/*
- * XgCalendar  v1.2.0.3
+ * XgCalendar  v1.2.0.4
  * Base on jQuery 1.2.6+
  * http://xuanye.cnblogs.com/
  *
@@ -1564,7 +1564,7 @@
             var left = offsetMe.left;
 
             var daystr = this.abbr;
-            var arrdays = daystr.split('/');
+            var arrdays = daystr.split(i18n.xgcalendar.dateformat.separator);
             var day = new Date(arrdays[0], parseInt(arrdays[1] - 1), arrdays[2]);
             var cc = $("#cal-month-cc");
             var ccontent = $("#cal-month-cc-content table tbody");

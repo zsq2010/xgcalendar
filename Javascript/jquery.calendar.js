@@ -1,21 +1,22 @@
 ﻿/*
- * XgCalendar  v1.2.0.4
- * Base on jQuery 1.2.6+
- * http://xuanye.cnblogs.com/
- *
- * Copyright (c) 2009 Xuanye.wan
- * under the Apache License 2.0 
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Date: 2009-11-24 11:23
- * Author:假正经哥哥(xuanye)
- * Blog:http://xuanye.cnblogs.com/
- * Email:xuanye.wan@gmail.com 
- * Source:http://code.google.com/p/xgcalendar/
- */
+* XgCalendar  v1.2.0.4
+* Base on jQuery 1.2.6+
+* http://xuanye.cnblogs.com/
+*
+* Copyright (c) 2009 Xuanye.wan
+* under the Apache License 2.0 
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Date: 2009-11-24 11:23
+* Author:假正经哥哥(xuanye)
+* Blog:http://xuanye.cnblogs.com/
+* Email:xuanye.wan@gmail.com 
+* Source:http://code.google.com/p/xgcalendar/
+*/
 ; (function($) {
     var __WDAY = new Array(i18n.xgcalendar.dateformat.sun, i18n.xgcalendar.dateformat.mon, i18n.xgcalendar.dateformat.tue, i18n.xgcalendar.dateformat.wed, i18n.xgcalendar.dateformat.thu, i18n.xgcalendar.dateformat.fri, i18n.xgcalendar.dateformat.sat);
     var __MonthName = new Array(i18n.xgcalendar.dateformat.jan, i18n.xgcalendar.dateformat.feb, i18n.xgcalendar.dateformat.mar, i18n.xgcalendar.dateformat.apr, i18n.xgcalendar.dateformat.may, i18n.xgcalendar.dateformat.jun, i18n.xgcalendar.dateformat.jul, i18n.xgcalendar.dateformat.aug, i18n.xgcalendar.dateformat.sep, i18n.xgcalendar.dateformat.oct, i18n.xgcalendar.dateformat.nov, i18n.xgcalendar.dateformat.dec);
+
     if (!Clone || typeof (Clone) != "function") {
         var Clone = function(obj) {
             var objClone = new Object();
@@ -43,12 +44,13 @@
             var o = {
                 "M+": this.getMonth() + 1,
                 "d+": this.getDate(),
-                "h+": this.getHours(),
+                "h+": this.getHours()>12?this.getHours()-12:this.getHours(),
                 "H+": this.getHours(),
                 "m+": this.getMinutes(),
                 "s+": this.getSeconds(),
                 "q+": Math.floor((this.getMonth() + 3) / 3),
                 "w": "0123456".indexOf(this.getDay()),
+				"t":this.getHours()<12?i18n.xgcalendar.dateformat.AM:i18n.xgcalendar.dateformat.PM,
                 "W": __WDAY[this.getDay()],
                 "L": __MonthName[this.getMonth()] //non-standard
             };
@@ -174,7 +176,9 @@
             readonly: false, //是否只读，某些情况下，可设置整个
             extParam: [], //额外参数，在所以异步请求中，都会附加的额外参数，可配置其他扩展的查询条件
             enableDrag: true, //是否可拖拽
-            loadDateR: [] //记录已加载过的日程的时间段
+            loadDateR: [], //记录已加载过的日程的时间段
+			timeFormat:" HH:mm", //t表示上午下午标识,h 表示12小时制的小时，H表示24小时制的小时,m表示分钟
+			tgtimeFormat:"HH:mm" //同上
         };
         var eventDiv = $("#gridEvent");
         if (eventDiv.length == 0) {
@@ -649,7 +653,7 @@
             ht.push("<div id=\"tgnowptr\" class=\"tg-nowptr\" style=\"left:0px;top:", mHg, "px\"></div>");
             var tmt = "";
             for (var i = 0; i < 24; i++) {
-                tmt = fomartTimeShow(i);
+                tmt = fomartTimeShow(i,0,option.tgtimeFormat);
                 ht.push("<div style=\"height: 41px\" class=\"tg-time\">", tmt, "</div>");
             }
             ht.push("</td>");
@@ -692,7 +696,7 @@
                 hv.push(tt);
             }
         }
-        function getTitle(event) {			
+        function getTitle(event) {
             var timeshow, locationshow, attendsshow, eventshow;
             var showtime = event[4] != 1;
             eventshow = event[1];
@@ -703,24 +707,25 @@
             attendsshow = (event[10] != undefined && event[10] != "") ? event[10] : "";
             var ret = [];
             if (event[4] == 1) {
-                ret.push("[" + i18n.xgcalendar.allday_event + "]",$.browser.mozilla?"":"\r\n" );
+                ret.push("[" + i18n.xgcalendar.allday_event + "]", $.browser.mozilla ? "" : "\r\n");
             }
             else {
                 if (event[5] == 1) {
-                    ret.push("[" + i18n.xgcalendar.repeat_event + "]",$.browser.mozilla?"":"\r\n");
+                    ret.push("[" + i18n.xgcalendar.repeat_event + "]", $.browser.mozilla ? "" : "\r\n");
                 }
             }
-            ret.push(i18n.xgcalendar.time + ":", timeshow, $.browser.mozilla?"":"\r\n", i18n.xgcalendar.event + ":", eventshow,$.browser.mozilla?"":"\r\n", i18n.xgcalendar.location + ":", locationshow);
+            ret.push(i18n.xgcalendar.time + ":", timeshow, $.browser.mozilla ? "" : "\r\n", i18n.xgcalendar.event + ":", eventshow, $.browser.mozilla ? "" : "\r\n", i18n.xgcalendar.location + ":", locationshow);
             if (attendsshow != "") {
-                ret.push($.browser.mozilla?"":"\r\n", i18n.xgcalendar.participant + ":", attendsshow);
+                ret.push($.browser.mozilla ? "" : "\r\n", i18n.xgcalendar.participant + ":", attendsshow);
             }
             return ret.join("");
         }
         //单个跨天日程和全天日程，或者是月视图下的日程
         function BuildDayEvent(theme, e, index) {
             var p = { bdcolor: theme[0], bgcolor2: theme[0], bgcolor1: theme[2], width: "70%", icon: "", title: "", data: "" };
-            p.starttime = pZero(e.st.hour) + ":" + pZero(e.st.minute);
-            p.endtime = pZero(e.et.hour) + ":" + pZero(e.et.minute);
+
+            p.starttime =fomartTimeShow(e.st.hour,e.st.minute,option.timeFormat);
+            p.endtime = fomartTimeShow(e.et.hour,e.et.minute,option.timeFormat);
             p.content = e.event[1];
             p.title = getTitle(e.event);
             p.data = e.event.join("$");
@@ -1058,7 +1063,7 @@
             }
             var cen;
             if (!e.allday && !sf) {
-                cen = pZero(e.st.hour) + ":" + pZero(e.st.minute) + " " + e.event[1];
+                cen =fomartTimeShow(e.st.hour,e.st.minute,option.timeFormat) + " " + e.event[1];
             }
             else {
                 cen = e.event[1];
@@ -1093,16 +1098,16 @@
                         param[param.length] = option.extParam[pi];
                     }
                 }
-				
+
                 $.ajax({
                     type: option.method, //
                     url: option.url,
-                    data: param,				   
-			        //dataType: "text",  // fixed jquery 1.4 not support Ms Date Json Format /Date(@Tickets)/
+                    data: param,
+                    //dataType: "text",  // fixed jquery 1.4 not support Ms Date Json Format /Date(@Tickets)/
                     dataType: "json",
-                    dataFilter: function(data, type) { return data.replace(/"\\\/(Date\([0-9-]+\))\\\/"/gi, "new $1");},
+                    dataFilter: function(data, type) { return data.replace(/"\\\/(Date\([0-9-]+\))\\\/"/gi, "new $1"); },
                     success: function(data) {//function(datastr) {									
-						//datastr =datastr.replace(/"\\\/(Date\([0-9-]+\))\\\/"/gi, 'new $1');						
+                        //datastr =datastr.replace(/"\\\/(Date\([0-9-]+\))\\\/"/gi, 'new $1');						
                         //var data = (new Function("return " + datastr))();
                         if (data != null && data.error != null) {
                             if (option.onRequestDataError) {
@@ -1118,8 +1123,8 @@
                         }
                         option.isloading = false;
                     },
-                    error: function(data) {	
-						try {							
+                    error: function(data) {
+                        try {
                             if (option.onRequestDataError) {
                                 option.onRequestDataError(1, data);
                             } else {
@@ -1274,8 +1279,20 @@
         function Ta(temp, dataarry) {
             return temp.replace(/\{([\d])\}/g, function(s1, s2) { var s = dataarry[s2]; if (typeof (s) != "undefined") { return encodeURIComponent(s); } else { return ""; } });
         }
-        function fomartTimeShow(h) {
-            return h < 10 ? "0" + h + ":00" : h + ":00";
+        function fomartTimeShow(h,m,f) {
+			var o={
+			    "h+":h>12?h-12:h,
+                "H+":h,
+                "m+":m,
+                "s+":0,
+				"t":h<12?i18n.xgcalendar.dateformat.AM:i18n.xgcalendar.dateformat.PM
+			};              
+            for (var k in o) {
+                if (new RegExp("(" + k + ")").test(f))
+                    f = f.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+            }
+			return f;
+			
         }
         function getymformat(date, comparedate, isshowtime, isshowweek, showcompare) {
             var showyear = isshowtime != undefined ? (date.getFullYear() != new Date().getFullYear()) : true;
@@ -1302,17 +1319,17 @@
             } else if (showday) {
                 a.push(i18n.xgcalendar.dateformat.day);
             }
-            a.push(showweek ? " (W)" : "", showtime ? " HH:mm" : "");
+            a.push(showweek ? " (W)" : "", showtime ? option.timeFormat : "");
             return a.join("");
         }
         function CalDateShow(startday, endday, isshowtime, isshowweek) {
             if (!endday) {
-                return dateFormat.call(startday, getymformat(startday,null,isshowtime));
+                return dateFormat.call(startday, getymformat(startday, null, isshowtime));
             } else {
-                var strstart= dateFormat.call(startday, getymformat(startday, null, isshowtime, isshowweek));
-				var strend=dateFormat.call(endday, getymformat(endday, startday, isshowtime, isshowweek));
-				var join = (strend!=""? " - ":"");
-				return [strstart,strend].join(join);
+                var strstart = dateFormat.call(startday, getymformat(startday, null, isshowtime, isshowweek));
+                var strend = dateFormat.call(endday, getymformat(endday, startday, isshowtime, isshowweek));
+                var join = (strend != "" ? " - " : "");
+                return [strstart, strend].join(join);
             }
         }
 
@@ -1517,13 +1534,13 @@
                     var iscos = DateDiff("d", data[2], data[3]) != 0;
                     ss.push(dateFormat.call(data[2], i18n.xgcalendar.dateformat.Md3), " (", __WDAY[data[2].getDay()], ")");
                     if (data[4] != 1) {
-                        ss.push(",", dateFormat.call(data[2], "HH:mm"));
+                        ss.push(",", dateFormat.call(data[2],option.timeFormat));
                     }
 
                     if (iscos) {
                         ss.push(" - ", dateFormat.call(data[3], i18n.xgcalendar.dateformat.Md3), " (", __WDAY[data[3].getDay()], ")");
                         if (data[4] != 1) {
-                            ss.push(",", dateFormat.call(data[3], "HH:mm"));
+                            ss.push(",", dateFormat.call(data[3], option.timeFormat));
                         }
                     }
                     var ts = $("#bbit-cs-buddle-timeshow").html(ss.join(""));
@@ -1772,8 +1789,8 @@
                 });
                 buddle.mousedown(function(e) { return false });
             }
-			
-            var dateshow = CalDateShow(start, end, !isallday, true);			
+
+            var dateshow = CalDateShow(start, end, !isallday, true);
             var off = getbuddlepos(pos.left, pos.top);
             if (off.hide) {
                 $("#prong2").hide()
@@ -1786,8 +1803,8 @@
             $("#bbit-cal-allday").val(isallday ? "1" : "0");
             $("#bbit-cal-start").val(dateFormat.call(start, i18n.xgcalendar.dateformat.fulldayvalue + " HH:mm"));
             $("#bbit-cal-end").val(dateFormat.call(end, i18n.xgcalendar.dateformat.fulldayvalue + " HH:mm"));
-            buddle.css({ "visibility": "visible", left: off.left, top: off.top });			
-			calwhat.blur().focus(); //add 2010-01-26 blur() fixed chrome 
+            buddle.css({ "visibility": "visible", left: off.left, top: off.top });
+            calwhat.blur().focus(); //add 2010-01-26 blur() fixed chrome 
             $(document).one("mousedown", function() {
                 $("#bbit-cal-buddle").css("visibility", "hidden");
                 realsedragevent();
@@ -2411,14 +2428,13 @@
                         break;
                     case 2: //周日视图添加日程
                     case 3: //月视图添加日程					
-                        var source = e.srcElement || e.target;                       
+                        var source = e.srcElement || e.target;
                         var lassoid = new Date().getTime();
                         if (!d.lasso) {
-							 if ($(source).hasClass("monthdayshow"))
-							{
-								weekormonthtoday.call($(source).parent()[0],e);
-								break;
-							}
+                            if ($(source).hasClass("monthdayshow")) {
+                                weekormonthtoday.call($(source).parent()[0], e);
+                                break;
+                            }
                             d.fdi = d.sdi = getdi(d.xa, d.ya, d.sx, d.sy);
                             d.lasso = $("<div style='z-index: 10; display: block' class='drag-lasso-container'/>");
                             $(document.body).append(d.lasso);
@@ -2615,7 +2631,7 @@
                 render();
                 dochange();
             },
-            nt: function() {				
+            nt: function() {
                 switch (option.view) {
                     case "day":
                         option.showday = DateAdd("d", 1, option.showday);
@@ -2624,13 +2640,13 @@
                         option.showday = DateAdd("w", 1, option.showday);
                         break;
                     case "month":
-						var od = option.showday.getDate();
-						option.showday = DateAdd("m", 1, option.showday);
-						var nd = option.showday.getDate();
-						if(od !=nd) //如果日期不相等则，说明进了一月
-						{
-							option.showday= DateAdd("d", 0-nd, option.showday); //上一月的最后一天
-						}
+                        var od = option.showday.getDate();
+                        option.showday = DateAdd("m", 1, option.showday);
+                        var nd = option.showday.getDate();
+                        if (od != nd) //如果日期不相等则，说明进了一月
+                        {
+                            option.showday = DateAdd("d", 0 - nd, option.showday); //上一月的最后一天
+                        }
                         break;
                 }
                 render();

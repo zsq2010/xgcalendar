@@ -6,6 +6,8 @@ var i18n = $.extend({}, i18n || {}, {
             "fulldayvalue": "M/d/yyyy",
             "Md": "W M/d",
             "Md3": "L d",
+            "AM": "am",
+            "PM": "pm",
             "separator": "/",
             "year_index": 2,
             "month_index": 0,

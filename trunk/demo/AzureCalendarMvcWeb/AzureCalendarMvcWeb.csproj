@@ -263,6 +263,7 @@
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>lang.en-AU.designer.cs</LastGenOutput>
     </Content>
+    <Content Include="Images\btn_donate_LG.gif" />
     <Content Include="Images\icons\au.gif" />
     <Content Include="Javascripts\lib\jquery.easydrag.js" />
     <Content Include="Javascripts\Plugins\datepicker_lang_zh_CN.js" />
@@ -290,7 +291,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>19429</DevelopmentServerPort>
+          <DevelopmentServerPort>4753</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

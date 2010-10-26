@@ -67,6 +67,15 @@
              <div id="changetoenglishau" class="fbutton">
                 <div><span title='<%=Html.Resource("lang,english")%>' class="english_au"><%=Html.Resource("lang,english")%></span></div>
             </div>
+             <div class="btnseparator"></div>
+            <div  style="margin-left:20px;">
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                <input type="hidden" name="cmd" value="_s-xclick">
+                <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
+                <input type="image" style="border:none;" src="/images/btn_donate_LG.gif" border="0" name="submit" alt="PayPal">
+                <img alt="" border="0" src="https://www.paypal.com/zh_XC/i/scr/pixel.gif" width="1" height="1">
+                </form>
+            </div>
             <div class="clear"></div>
             </div>
       </div>
@@ -95,7 +104,7 @@
     <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.alert.js")%>" type="text/javascript"></script>    
     <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.ifrmdailog.js")%>" defer="defer" type="text/javascript"></script>
     <script src="<%=Url.Content(Html.Resource("lang,calendar_langpack_url"))%>" type="text/javascript"></script>  
-    <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.calendar.min.js?v=1.2.0.2")%>" type="text/javascript"></script>   
+    <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.calendar.min.js?v=1.2.0.4")%>" type="text/javascript"></script>   
     <script type="text/javascript">
         $(document).ready(function() {
             //[id,title,start,end，全天日程，跨日日程,循环日程,theme,'','']          
@@ -115,7 +124,9 @@
                 url: "<%=Url.Action("GetPersonalCalViewData")%>" ,  
                 quickAddUrl: "<%=Url.Action("QuickAddPersonalCal")%>", //快速添加日程Post Url 地址
                 quickUpdateUrl:"<%=Url.Action("QuickUpdatePersonalCal")%>",
-                quickDeleteUrl: "<%=Url.Action("QuickDeletePersonalCal")%>"//快速删除日程的              
+                quickDeleteUrl: "<%=Url.Action("QuickDeletePersonalCal")%>",//快速删除日程的
+                timeFormat:" hh:mm t", //t表示上午下午标识,h 表示12小时制的小时，H表示24小时制的小时,m表示分钟
+			    tgtimeFormat:"ht" //同上              
             };
             var $dv = $("#calhead");
             var _MH = document.documentElement.clientHeight;

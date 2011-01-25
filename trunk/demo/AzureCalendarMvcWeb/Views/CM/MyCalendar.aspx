@@ -104,7 +104,7 @@
     <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.alert.js")%>" type="text/javascript"></script>    
     <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.ifrmdailog.js")%>" defer="defer" type="text/javascript"></script>
     <script src="<%=Url.Content(Html.Resource("lang,calendar_langpack_url"))%>" type="text/javascript"></script>  
-    <script src="<%=Url.Content("~/Javascripts/Plugins/jquery.calendar.min.js?v=1.2.0.4")%>" type="text/javascript"></script>   
+    <script src="<%=Url.Content("~/Javascripts/Plugins/xgcalendar.min.js?v=1.2.0.4")%>" type="text/javascript"></script>   
     <script type="text/javascript">
         $(document).ready(function() {
             //[id,title,start,end，全天日程，跨日日程,循环日程,theme,'','']          
@@ -124,9 +124,9 @@
                 url: "<%=Url.Action("GetPersonalCalViewData")%>" ,  
                 quickAddUrl: "<%=Url.Action("QuickAddPersonalCal")%>", //快速添加日程Post Url 地址
                 quickUpdateUrl:"<%=Url.Action("QuickUpdatePersonalCal")%>",
-                quickDeleteUrl: "<%=Url.Action("QuickDeletePersonalCal")%>",//快速删除日程的
-                timeFormat:" hh:mm t", //t表示上午下午标识,h 表示12小时制的小时，H表示24小时制的小时,m表示分钟
-			    tgtimeFormat:"ht" //同上              
+                quickDeleteUrl: "<%=Url.Action("QuickDeletePersonalCal")%>"//快速删除日程的
+               /* timeFormat:" hh:mm t", //t表示上午下午标识,h 表示12小时制的小时，H表示24小时制的小时,m表示分钟
+			    tgtimeFormat:"ht" //同上 */             
             };
             var $dv = $("#calhead");
             var _MH = document.documentElement.clientHeight;

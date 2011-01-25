@@ -248,8 +248,6 @@
     </Content>
     <Content Include="Images\icons\cn.gif" />
     <Content Include="Images\icons\us.gif" />
-    <Content Include="Javascripts\jquery-1.4.js" />
-    <Content Include="Javascripts\jquery-1.4.min.js" />
     <Content Include="Javascripts\Plugins\datepicker_lang_en_US.js" />
     <Content Include="App_GlobalResources\lang.zh-CN.resx">
       <LastGenOutput>lang.zh-CN.Designer.cs</LastGenOutput>
@@ -267,7 +265,7 @@
     <Content Include="Images\icons\au.gif" />
     <Content Include="Javascripts\lib\jquery.easydrag.js" />
     <Content Include="Javascripts\Plugins\datepicker_lang_zh_CN.js" />
-    <Content Include="Javascripts\Plugins\jquery.calendar.min.js" />
+    <Content Include="Javascripts\Plugins\xgcalendar.min.js" />
     <Content Include="Theme\Default\images\dailog\left-corners.png" />
     <Content Include="Theme\Default\images\dailog\left-right.png" />
     <Content Include="Theme\Default\images\dailog\right-corners.png" />

@@ -1,12 +1,13 @@
 ﻿/*
-* XgCalendar  v1.2.1.0
+* XgCalendar  v1.2.0.4
 * Base on jQuery 1.2.6+
 * http://xuanye.cnblogs.com/
 *
 * Copyright (c) 2009 Xuanye.wan
-* under GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-
-* Date: 2011-01-25 14:42
+* under the Apache License 2.0 
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Date: 2009-11-24 11:23
 * Author:假正经哥哥(xuanye)
 * Blog:http://xuanye.cnblogs.com/
 * Email:xuanye.wan@gmail.com 
@@ -183,7 +184,13 @@
         if (eventDiv.length == 0) {
             eventDiv = $("<div id='gridEvent' style='display:none;'></div>").appendTo(document.body);
         }
-        var gridcontainer = $(this);
+	
+        var cc = $("#cal-month-cc");
+	    if (cc.length == 0) {
+           $( "<div id='cal-month-cc' class='cc'><div id='cal-month-cc-header'><div class='cc-close' id='cal-month-closebtn'></div><div id='cal-month-cc-title' class='cc-title'></div></div><div id='cal-month-cc-body' class='cc-body'><div id='cal-month-cc-content' class='st-contents'><table class='st-grid' cellSpacing='0' cellPadding='0'><tbody></tbody></table></div></div></div>").appendTo(document.body);
+        }
+		cc=null;
+		var gridcontainer = $(this);
         option = $.extend(def, option);
         //如果快速更新链接陪游配置，则快速新增不能实现
         if (option.quickUpdateUrl == null || option.quickUpdateUrl == "") {
@@ -379,10 +386,8 @@
             //$("#weekViewAllDaywk").click(RowHandler);
         }
         //构建月视图
-        function BuildMonthView(showday, events, config) {
-            var cc = "<div id='cal-month-cc' class='cc'><div id='cal-month-cc-header'><div class='cc-close' id='cal-month-closebtn'></div><div id='cal-month-cc-title' class='cc-title'></div></div><div id='cal-month-cc-body' class='cc-body'><div id='cal-month-cc-content' class='st-contents'><table class='st-grid' cellSpacing='0' cellPadding='0'><tbody></tbody></table></div></div></div>";
-            var html = [];
-            html.push(cc);
+        function BuildMonthView(showday, events, config) {        
+            var html = [];          
             //build header
             html.push("<div id=\"mvcontainer\" class=\"mv-container\">");
             html.push("<table id=\"mvweek\" class=\"mv-daynames-table\" cellSpacing=\"0\" cellPadding=\"0\"><tbody><tr>");
@@ -403,7 +408,7 @@
             $("#cal-month-closebtn").click(closeCc);
         }
         function closeCc() {
-            $("#cal-month-cc").css("visibility", "hidden");
+            $("#cal-month-cc").css("display", "none");
         }
         //切分一半的日程后，全天日程（包括跨日）
         function PropareEvents(dayarrs, events, aDE, sDE) {
@@ -1568,7 +1573,7 @@
             return false;
         }
 
-        function moreshow(mv) {
+        function moreshow(mv) {			
             var me = $(this);
             var divIndex = mv.id.split('_')[1];
             var pdiv = $(mv);
@@ -1611,6 +1616,7 @@
             });
 
             edata = events = null;
+			
             var height = cc.height();
             var maxleft = document.documentElement.clientWidth;
             var maxtop = document.documentElement.clientHeight;
@@ -1618,9 +1624,13 @@
                 left = offsetMe.left - (me.width() + 2) * 0.5;
             }
             if (top + height >= maxtop) {
-                top = maxtop - height - 2;
+                top = maxtop - height - 10;
             }
-            var newOff = { left: left, top: top, "z-index": 180, width: width, "visibility": "visible" };
+			if(left ==0)
+			{
+				left =10;
+			}
+            var newOff = { left: left, top: top, "z-index": 180, width: width, "display": "block" };
             cc.css(newOff);
             $(document).one("click", closeCc);
             return false;
@@ -1745,6 +1755,7 @@
                         $.post(option.quickAddUrl, param, function(data) {
                             if (data) {
                                 if (data.IsSuccess == true) {
+								
                                     option.isloading = false;
                                     option.eventItems[tId][0] = data.Data;
                                     option.eventItems[tId][8] = 1;
@@ -1767,6 +1778,7 @@
                         var diff = DateDiff("d", sd, ed);
                         newdata.push(sd, ed, allday == "1" ? 1 : 0, diff > 0 ? 1 : 0, 0);
                         newdata.push(-1, 0, "", ""); //主题,权限,参与人，
+						
                         tId = Ind(newdata);
                         realsedragevent();
                         render();
@@ -1864,6 +1876,10 @@
                     else if (d2 < 0) {
                         i = sl;
                     }
+					else if(d1==d2)
+					{
+						i=sl;
+					}
                     else {
                         for (var j = sl - 1; j >= 0; j--) {
                             if (option.eventItems[j][2] < s) {

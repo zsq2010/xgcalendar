@@ -454,7 +454,7 @@ border-bottom:2px solid #c3d9ff;
 	position:absolute;
 	border:1px solid gray;
 	background-color:white;
-	visibility:hidden
+	display:none
 }
 .cc-titlebar {
 	background-color:#e8eef7

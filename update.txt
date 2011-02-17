@@ -56,3 +56,8 @@ Subsonic 相关问题 http://Subsonicproject.com/
 2011-01-25
 23:脚本压缩调整为使用Google Closure.Compiler 测试下来效果还不错
 24:脚本文件更名 文件名jquery.calendar.js 修改为xgcalendar.js
+
+2011-02-17
+25:修正了月视图下 底部一栏 如果日程太多，显示不全时点击更多 显示错位的问题
+ 修改了js 和css文件
+26：修正了月视图下，所有日程的开始时间都是相同时，新增日程报错的问题

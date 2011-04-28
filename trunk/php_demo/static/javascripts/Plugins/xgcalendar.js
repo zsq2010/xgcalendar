@@ -216,8 +216,8 @@
         gridcontainer.css("overflow-y", "visible").height(option.height - 8);
 
         // 如果获取数据的URL已经配置，同时允许自动加载则，加载数据
-        if (option.url && option.autoload) {				
-			populate(); //访问数据
+        if (option.url && option.autoload) {
+            populate(); //访问数据
         }
         else {
             //否则直接开始输出HTML          
@@ -1090,6 +1090,7 @@
                 if (option.onBeforeRequestData && $.isFunction(option.onBeforeRequestData)) {
                     option.onBeforeRequestData(1);
                 }
+				
                 var zone = new Date().getTimezoneOffset() / 60 * -1;
                 var param = [
                 { name: "showdate", value: dateFormat.call(option.showday, i18n.xgcalendar.dateformat.fulldayvalue) },
@@ -1110,8 +1111,7 @@
                     dataType: "json",
                     dataFilter: function(data, type) { return data.replace(/"\\\/(Date\([0-9-]+\))\\\/"/gi, "new $1"); },
                     success: function(data) {//function(datastr) {									
-                        //datastr =datastr.replace(/"\\\/(Date\([0-9-]+\))\\\/"/gi, 'new $1');						
-                        //var data = (new Function("return " + datastr))();
+                       //	debugger;
                         if (data != null && data.error != null) {
                             if (option.onRequestDataError) {
                                 option.onRequestDataError(1, data);

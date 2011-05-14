@@ -1,11 +1,13 @@
 <?php
+header("Content-type:application/json; charset=utf-8"); 
 require_once('includes/prefs.inc.php');
 require_once('includes/db.php');
 require_once('resources/i18n.php');
 
+
 if( IsPost() ) // 如果是post提交数据
 {
-	header("Content-type:application/json; charset=utf-8"); 
+	
 	$mode = getPref('mode');
 	switch($mode)
 	{
@@ -98,13 +100,19 @@ function QuickUpdate()
 	$ret =array();
 	try
 	{
+		
 		$id =getPref("calendarId");
+		//echo getPref("CalendarStartTime")."|";
+		//echo getPref("CalendarEndTime")."|";
+		//echo msg(datestring)."|";
 		$start_time = DateTime::createFromFormat(msg(datestring)." H:i",getPref("CalendarStartTime"));
 		$end_time = DateTime::createFromFormat(msg(datestring)." H:i",getPref("CalendarEndTime"));
+
 		$clientzone = getPref('timezone');
 		$serverzone= TIMEZONE_INDEX;
 		$zonediff = $serverzone-$clientzone ; 
 		$rcount = DbUpdateCalendar($id ,addtime($start_time,$zonediff,0,0)->format("Y-m-d H:i:s"),addtime($end_time,$zonediff,0,0)->format("Y-m-d H:i:s"),$clientzone);
+	
 		if($rcount>0)
 		{
 			$ret["IsSuccess"] =true;
@@ -279,19 +287,21 @@ function DbQueryCalendars($qstart,$qend,$userId,$zonediff)
 {
 	$db = db_connect();	
 	
-	$result = $db->query("SELECT * FROM calendar where StartTime<'{$qend}' and EndTime>'{$qstart}' order by StartTime,EndTime");		
+	$result = $db->query("SELECT * FROM calendar where StartTime<'{$qend}' and EndTime>'{$qstart}' and UPAccount='{$userId}' order by StartTime,EndTime");		
 
 	$ret =array();	
 
 	if($result)
 	{
+		//echo date("ymd",$row["StartTime"]);
+		//echo date("ymd",$row["EndTime"]);
 		foreach ($result as $row) {
 			$ret[] = array(
 				$row["Id"],$row["Subject"],
 				TimeToJsonTime($row["StartTime"]),
 				TimeToJsonTime($row["EndTime"]),
 				$row["IsAlldayEvent"]?1:0,
-				date("ymd",$row["StartTime"])==date("ymd",$row["EndTime"])? 0:1,
+				TimeToTimeStringFormat($row["StartTime"],"Ymd")==TimeToTimeStringFormat($row["EndTime"],"Ymd")? 0:1,
 				1,
 				$row["Category"]=="1"?1:0,1,$row["Attendees"],$row["Location"]
 			);		

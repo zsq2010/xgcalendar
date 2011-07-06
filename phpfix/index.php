@@ -1,99 +1,20 @@
 <?php
-   require_once ("includes/commons.inc");
+   require_once ("includes/commons.php");
    require_once ("resources/i18n.php");
-  
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
 <html xmlns="http://www.w3.org/1999/xhtml"> 
  <head>
   <title><?php echo msg("title");?> </title>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-  <link href="static/theme/Default/main.css"" rel="stylesheet" type="text/css" />
+  <link href="static/theme/Default/main.css" rel="stylesheet" type="text/css" />
   <link href="static/theme/Default/dailog.css" rel="stylesheet" type="text/css" />
   <link href="static/theme/Default/calendar.css" rel="stylesheet" type="text/css" /> 
   <link href="static/theme/Default/dp.css" rel="stylesheet" type="text/css" />   
   <link href="static/theme/Default/alert.css" rel="stylesheet" type="text/css" />     
   <link href="static/theme/Shared/blackbird.css" rel="stylesheet" type="text/css" />
- </head>
-
- <body>
-<div>
-      <div id="calhead" style="padding-left:1px;padding-right:1px;">          
-            <div class="cHead"><div class="ftitle"><?php echo ucfmsg("title") ?></div>
-            <div id="loadingpannel" class="ptogtitle loadicon" style="display: none;"><?php echo ucfmsg("loaddatamsg"); ?></div>
-             <div id="errorpannel" class="ptogtitle loaderror" style="display: none;"><?php echo ucfmsg("defaulterrormsg"); ?></div>
-            </div>          
-            
-            <div id="caltoolbar" class="ctoolbar">
-              <div id="faddbtn" class="fbutton">
-                <div><span title='<?php echo ucfmsg("new_event_title") ?>' class="addcal">
-                <?php echo ucfmsg("new_event");  ?>            
-                </span></div>
-            </div>
-            <div class="btnseparator"></div>
-             <div id="showtodaybtn" class="fbutton">
-                <div><span title='<?php echo ucfmsg("today_title") ;?> ' class="showtoday">
-                <?php echo ucfmsg("today") ; ?></span></div>
-            </div>
-              <div class="btnseparator"></div>
-            <div id="showdaybtn" class="fbutton">
-                <div><span title='<?php echo ucfmsg("day") ?>' class="showdayview"><?php echo ucfmsg("day") ; ?></span></div>
-            </div>
-              <div  id="showweekbtn" class="fbutton fcurrent">
-                <div><span title='<?php echo ucfmsg("week") ?>' class="showweekview"><?php echo ucfmsg("week") ; ?></span></div>
-            </div>
-              <div  id="showmonthbtn" class="fbutton">
-                <div><span title='<?php echo ucfmsg("month") ?>' class="showmonthview"><?php echo ucfmsg("month");  ?></span></div>
-            </div>
-            <div class="btnseparator"></div>
-              <div  id="showreflashbtn" class="fbutton">
-                <div><span title='<?php echo ucfmsg("refresh_title") ?>' class="showdayflash"><?php echo ucfmsg("refresh");  ?></span></div>
-                </div>
-             <div class="btnseparator"></div>
-            <div id="sfprevbtn" title="<?php echo ucfmsg("prev_title") ; ?>"  class="fbutton">
-              <span class="fprev"></span>
-            </div>
-            <div id="sfnextbtn" title="<?php echo ucfmsg("next_title") ; ?>" class="fbutton">
-                <span class="fnext"></span>
-            </div>
-            <div class="fshowdatep fbutton">
-                    <div>
-                        <input type="hidden" name="txtshow" id="hdtxtshow" />
-                        <span id="txtdatetimeshow">Loading</span>
-                    </div>
-            </div>
-            <div class="btnseparator"></div>
-            <div id="changetochinese" class="fbutton">
-                <div><span title='<?php echo ucfmsg("chinese") ; ?>' class="chinese"><?php echo ucfmsg("chinese") ; ?></span></div>
-            </div>
-            <div id="changetoenglish" class="fbutton">
-                <div><span title='<?php echo ucfmsg("english");  ?>' class="english"><?php echo ucfmsg("english");  ?></span></div>
-            </div>
-             <div id="changetoenglishau" class="fbutton">
-                <div><span title='<?php echo ucfmsg("english");  ?>' class="english_au"><?php echo ucfmsg("english") ; ?></span></div>
-            </div>
-             <div class="btnseparator"></div>         
-            <div class="clear"></div>
-            </div>
-      </div>
-      <div style="padding:1px;">
-        <div class="t1 chromeColor">
-            &nbsp;</div>
-        <div class="t2 chromeColor">
-            &nbsp;</div>
-        <div id="dvCalMain" class="calmain printborder">
-            <div id="gridcontainer" style="overflow-y: visible;">
-            </div>
-        </div>
-        <div class="t2 chromeColor">
-            &nbsp;</div>
-        <div class="t1 chromeColor">
-            &nbsp;
-        </div>   
-        </div>
-     
-  </div>
-    <script src="static/javascripts/jquery.min.js" type="text/javascript"></script>  
+  
+  <script src="static/javascripts/jquery.min.js" type="text/javascript"></script>
     <script src="static/javascripts/Common.js" type="text/javascript"></script>    
     <script src="static/javascripts/lib/blackbird.js" type="text/javascript"></script> 
     <script src="<?php echo msg("datepicker_langpack_url");  ?>" type="text/javascript"></script>     
@@ -105,8 +26,8 @@
     <script type="text/javascript">
         $(document).ready(function() {
             //[id,title,start,end，全天日程，跨日日程,循环日程,theme,'','']          
-           var view="week";          
-            <?php include("_part.php"); ?>
+           var view="week";
+           
             var op = {
                 view: view,
                 theme:3,
@@ -118,6 +39,7 @@
                 onBeforeRequestData: cal_beforerequest,
                 onAfterRequestData: cal_afterrequest,
                 onRequestDataError: cal_onerror, 
+                autoload:true,
                 url: "calendar.php?mode=get" ,  
                 quickAddUrl: "calendar.php?mode=quickadd" ,  
                 quickUpdateUrl: "calendar.php?mode=quickupdate" ,  
@@ -129,7 +51,7 @@
             var _MH = document.documentElement.clientHeight;
             var dvH = $dv.height() + 2;
             op.height = _MH - dvH;
-            op.eventItems =__CURRENTDATA;
+            op.eventItems =[];
 
             var p = $("#gridcontainer").bcalendar(op).BcalGetOp();
             if (p && p.datestrshow) {
@@ -178,13 +100,37 @@
                 }              
                
             }
+            
+            function dump(arr,level) {
+                var dumped_text = "";
+                if(!level) level = 0;
+                //The padding given at the beginning of the line.
+                var level_padding = "";
+                for(var j=0;j<level+1;j++) level_padding += "    ";
+                if(typeof(arr) == 'object') { //Array/Hashes/Objects 
+                    for(var item in arr) {
+                        var value = arr[item];
+                        if(typeof(value) == 'object') { //If it is an array,
+                            dumped_text += level_padding + "'" + item + "' ...\n";
+                            dumped_text += dump(value,level+1);
+                        } else {
+                            dumped_text += level_padding + "'" + item + "' => \"" + value + "\"\n";
+                        }
+                    }
+                } else { //Stings/Chars/Numbers etc.
+                    dumped_text = "===>"+arr+"<===("+typeof(arr)+")";
+                }
+                return dumped_text;
+            }
             function cal_onerror(type,data)
             {
                 $("#errorpannel").show();
+                $("#gridcontainer").html("<pre>"+dump(data)+"</pre>").show();
             }
+            
             function Edit(data)
             {
-               var eurl="";   
+               var eurl="edit.php?id={0}";   
                 if(data)
                 {
                     var url = StrFormat(eurl,data);
@@ -301,6 +247,87 @@
             
         });
     </script>
+  
+ </head>
+
+ <body>
+<div>
+      <div id="calhead" style="padding-left:1px;padding-right:1px;">          
+            <div class="cHead"><div class="ftitle"><?php echo ucfmsg("title") ?></div>
+            <div id="loadingpannel" class="ptogtitle loadicon" style="display: none;"><?php echo ucfmsg("loaddatamsg"); ?></div>
+             <div id="errorpannel" class="ptogtitle loaderror" style="display: none;"><?php echo ucfmsg("defaulterrormsg"); ?></div>
+            </div>          
+            
+            <div id="caltoolbar" class="ctoolbar">
+              <div id="faddbtn" class="fbutton">
+                <div><span title='<?php echo ucfmsg("new_event_title") ?>' class="addcal">
+                <?php echo ucfmsg("new_event");  ?>            
+                </span></div>
+            </div>
+            <div class="btnseparator"></div>
+             <div id="showtodaybtn" class="fbutton">
+                <div><span title='<?php echo ucfmsg("today_title") ;?> ' class="showtoday">
+                <?php echo ucfmsg("today") ; ?></span></div>
+            </div>
+              <div class="btnseparator"></div>
+            <div id="showdaybtn" class="fbutton">
+                <div><span title='<?php echo ucfmsg("day") ?>' class="showdayview"><?php echo ucfmsg("day") ; ?></span></div>
+            </div>
+              <div  id="showweekbtn" class="fbutton fcurrent">
+                <div><span title='<?php echo ucfmsg("week") ?>' class="showweekview"><?php echo ucfmsg("week") ; ?></span></div>
+            </div>
+              <div  id="showmonthbtn" class="fbutton">
+                <div><span title='<?php echo ucfmsg("month") ?>' class="showmonthview"><?php echo ucfmsg("month");  ?></span></div>
+            </div>
+            <div class="btnseparator"></div>
+              <div  id="showreflashbtn" class="fbutton">
+                <div><span title='<?php echo ucfmsg("refresh_title") ?>' class="showdayflash"><?php echo ucfmsg("refresh");  ?></span></div>
+                </div>
+             <div class="btnseparator"></div>
+            <div id="sfprevbtn" title="<?php echo ucfmsg("prev_title") ; ?>"  class="fbutton">
+              <span class="fprev"></span>
+            </div>
+            <div id="sfnextbtn" title="<?php echo ucfmsg("next_title") ; ?>" class="fbutton">
+                <span class="fnext"></span>
+            </div>
+            <div class="fshowdatep fbutton">
+                    <div>
+                        <input type="hidden" name="txtshow" id="hdtxtshow" />
+                        <span id="txtdatetimeshow">Loading</span>
+                    </div>
+            </div>
+            <div class="btnseparator"></div>
+            <div id="changetochinese" class="fbutton">
+                <div><span title='<?php echo ucfmsg("chinese") ; ?>' class="chinese"><?php echo ucfmsg("chinese") ; ?></span></div>
+            </div>
+            <div id="changetoenglish" class="fbutton">
+                <div><span title='<?php echo ucfmsg("english");  ?>' class="english"><?php echo ucfmsg("english");  ?></span></div>
+            </div>
+             <div id="changetoenglishau" class="fbutton">
+                <div><span title='<?php echo ucfmsg("english");  ?>' class="english_au"><?php echo ucfmsg("english") ; ?></span></div>
+            </div>
+             <div class="btnseparator"></div>         
+            <div class="clear"></div>
+            </div>
+      </div>
+      <div style="padding:1px;">
+        <div class="t1 chromeColor">
+            &nbsp;</div>
+        <div class="t2 chromeColor">
+            &nbsp;</div>
+        <div id="dvCalMain" class="calmain printborder">
+            <div id="gridcontainer" style="overflow-y: visible;">
+            </div>
+        </div>
+        <div class="t2 chromeColor">
+            &nbsp;</div>
+        <div class="t1 chromeColor">
+            &nbsp;
+        </div>   
+        </div>
+     
+  </div>
+    
  </body>
 </html>
 

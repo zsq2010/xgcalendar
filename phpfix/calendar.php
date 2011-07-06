@@ -1,11 +1,12 @@
 <?php
-header("Content-type:application/json; charset=utf-8"); 
+//header("Content-type:application/json; charset=utf-8"); 
 require_once('includes/prefs.inc.php');
 require_once('includes/db.php');
 require_once('resources/i18n.php');
 
 
-if( IsPost() ) // 如果是post提交数据
+//if( IsPost() ) // 如果是post提交数据
+if( true )
 {
 	
 	$mode = getPref('mode');
@@ -23,6 +24,13 @@ if( IsPost() ) // 如果是post提交数据
 		case "quickdelete":
 			QuickDelete();
 			break;
+        case "detailadd":
+            if(isset($_GET['id'])) {
+                DetailUpdate();
+            } else {
+                DetailAdd();
+            }
+			break;
 		default :
 			DefaultImpl();
 			break;
@@ -35,7 +43,7 @@ function DefaultImpl()
 	$ret["error"] = array("ErrorCode"=>"NotVolidMode","ErrorMsg"=>"") ;
 	echo json_encode($ret);
 }
-function QuickAdd()
+function DetailAdd()
 {
 	$ret = array();
  	$subject = getPref("CalendarTitle");
@@ -45,14 +53,14 @@ function QuickAdd()
 	$clientzone = getPref('timezone');
 	$serverzone= TIMEZONE_INDEX;
 	$zonediff = $serverzone-$clientzone ; 
-	$start_date = DateTime::createFromFormat(msg(datestring)." H:i",$strStartTime);
+	$start_date = DateTime::createFromFormat(msg('datestring')." H:i",$strStartTime);
 	if ($start_date==null) {
 		$ret["IsSuccess"] =false;
 		$ret["Msg"] =msg("notvoliddatetimeformat").":".$strStartTime;
 		echo json_encode($ret); 
 		return;
 	}
-	$end_date = DateTime::createFromFormat(msg(datestring)." H:i",$strEndTime);
+	$end_date = DateTime::createFromFormat(msg('datestring')." H:i",$strEndTime);
 	if ($end_date==null) {
 		$ret["IsSuccess"] =false;
 		$ret["Msg"] =msg("notvoliddatetimeformat").":".$strEndTime;
@@ -95,6 +103,105 @@ function QuickAdd()
 	}
 	echo json_encode($ret);
 }
+function QuickAdd()
+{
+	$ret = array();
+ 	$subject = getPref("CalendarTitle");
+	$strStartTime = getPref("CalendarStartTime");
+	$strEndTime =  getPref("CalendarEndTime");
+	$isallday =  getPref("IsAllDayEvent");
+	$clientzone = getPref('timezone');
+	$serverzone= TIMEZONE_INDEX;
+	$zonediff = $serverzone-$clientzone ; 
+	$start_date = DateTime::createFromFormat(msg('datestring')." H:i",$strStartTime);
+	if ($start_date==null) {
+		$ret["IsSuccess"] =false;
+		$ret["Msg"] =msg("notvoliddatetimeformat").":".$strStartTime;
+		echo json_encode($ret); 
+		return;
+	}
+	$end_date = DateTime::createFromFormat(msg('datestring')." H:i",$strEndTime);
+	if ($end_date==null) {
+		$ret["IsSuccess"] =false;
+		$ret["Msg"] =msg("notvoliddatetimeformat").":".$strEndTime;
+		echo json_encode($ret);
+		return;
+	}
+	
+	try
+	{
+		$cal = array(
+		"CalendarType" => 1,
+		"InstanceType" => 0,
+		"Subject" => $subject,
+		"StartTime" => addtime($start_date,$zonediff,0,0),
+		"EndTime" => addtime($end_date,$zonediff,0,0),
+		"IsAllDayEvent" => isallday == "1"?1:0,
+		"UPAccount" => GetClientIP(),
+		"UPName" => msg("admin"),
+		"UPTime" => new DateTime(),
+		"MasterId" => $clientzone
+		);
+		//print_r($cal);
+		$newid = DbInsertCalendar($cal);
+		if($newid>0)
+		{
+			$ret["IsSuccess"] =true;
+			$ret["Msg"] =msg("successmsg");
+			$ret["Data"] = $newid;
+		}
+		else 
+		{
+			$ret["IsSuccess"] =false;
+			$ret["Msg"] =msg("dberror");
+		}
+	}
+	catch(Exception $e)
+	{
+			$ret["IsSuccess"] =false;
+			$ret["Msg"] = $e->getMessage();
+	}
+	echo json_encode($ret);
+}
+function DetailUpdate()
+{
+	$ret =array();
+	try
+	{
+		
+		$id =getPref("id");
+		//echo getPref("CalendarStartTime")."|";
+		//echo getPref("CalendarEndTime")."|";
+		//echo msg(datestring)."|";
+        // print_r($GLOBALS);
+        // print_r(getPref("CalendarStartTime"));
+		$start_time = DateTime::createFromFormat(msg('datestring')." H:i",getPref("stpartdate")." ".getPref("stparttime"));
+		$end_time = DateTime::createFromFormat(msg('datestring')." H:i",getPref("etpartdate")." ".getPref("etparttime"));
+        $subject = getPref('Subject');
+        
+		$clientzone = getPref('timezone');
+		$serverzone= TIMEZONE_INDEX;
+		$zonediff = $serverzone-$clientzone ; 
+		$rcount = DbUpdateDetailCalendar($id ,addtime($start_time,$zonediff,0,0)->format("Y-m-d H:i:s"),addtime($end_time,$zonediff,0,0)->format("Y-m-d H:i:s"),$clientzone,$subject);
+	
+		if($rcount>0)
+		{
+			$ret["IsSuccess"] =true;
+			$ret["Msg"] =msg("successmsg");
+		}
+		else
+		{
+			$ret["IsSuccess"] =false;
+			$ret["Msg"] =msg("dberror");
+		}
+	}
+	catch(Exception $e)
+	{
+			$ret["IsSuccess"] =false;
+			$ret["Msg"] = $e->getMessage();
+	}
+	echo json_encode($ret);
+}
 function QuickUpdate()
 {
 	$ret =array();
@@ -105,8 +212,8 @@ function QuickUpdate()
 		//echo getPref("CalendarStartTime")."|";
 		//echo getPref("CalendarEndTime")."|";
 		//echo msg(datestring)."|";
-		$start_time = DateTime::createFromFormat(msg(datestring)." H:i",getPref("CalendarStartTime"));
-		$end_time = DateTime::createFromFormat(msg(datestring)." H:i",getPref("CalendarEndTime"));
+		$start_time = DateTime::createFromFormat(msg('datestring')." H:i",getPref("CalendarStartTime"));
+		$end_time = DateTime::createFromFormat(msg('datestring')." H:i",getPref("CalendarEndTime"));
 
 		$clientzone = getPref('timezone');
 		$serverzone= TIMEZONE_INDEX;
@@ -153,7 +260,7 @@ function QuickDelete()
 		else
 		{
 			$ret["IsSuccess"] =false;
-			$ret["Msg"] =msg("dberror");
+			$ret["Msg"] =msg("dberror : $id");
 		}
 	}
 	catch(Exception $e)
@@ -165,8 +272,8 @@ function QuickDelete()
 }
 function strtodate($strdata)
 {	
-	
-	$date= date_create_from_format(msg(datestring),$strdata );
+
+	$date = date_create_from_format(msg('datestring'),$strdata);
 	
 	return $date;
 }
@@ -180,7 +287,7 @@ function GetCalendarsByRange()
 	$zonediff = $serverzone-$clientzone ; 
 	$showday = strtodate($str_show_day);
 
-	if (($timestamp =  date_timestamp_get($showday)) === false) {
+	if (($timestamp = date_timestamp_get($showday)) === false) {
 		echo 1;
 		$ret["error"] = array("ErrorCode"=>"NotVolidDateTimeFormat","ErrorMsg"=>msg("notvoliddatetimeformat")) ;//替换成
 	}
@@ -217,6 +324,23 @@ function DbDeleteCalendar($id)
 	}		
 	return -1;
 }
+function DbUpdateDetailCalendar($id,$start_date,$end_date,$client_zone,$subject)
+{
+	$db = db_connect();
+	$start_date = safeparam($start_date);
+	$end_date = safeparam($end_date);
+	$id = safeparam($id);
+	$sql = "UPDATE calendar set  StartTime='{$start_date}',EndTime='{$end_date}',MasterId='{$client_zone}', Subject='{$subject}' where Id={$id}";
+
+	$affected_rowscount =$db->exec($sql);	
+	$ret["error"] = $sql;
+	if($affected_rowscount>0)
+	{
+		//echo $affected_rowscount;
+		return $affected_rowscount;
+	}	
+	return $ret;
+}
 function DbUpdateCalendar($id,$start_date,$end_date,$client_zone)
 {
 	$db = db_connect();
@@ -226,13 +350,13 @@ function DbUpdateCalendar($id,$start_date,$end_date,$client_zone)
 	$sql = "UPDATE calendar set  StartTime='{$start_date}',EndTime='{$end_date}',MasterId='{$client_zone}' where Id={$id}";
 
 	$affected_rowscount =$db->exec($sql);	
-	
+	$ret["error"] = $sql;
 	if($affected_rowscount>0)
 	{
 		//echo $affected_rowscount;
 		return $affected_rowscount;
 	}	
-	return -1;
+	return $ret;
 }
 function DbInsertCalendar($cal)
 {
@@ -300,7 +424,7 @@ function DbQueryCalendars($qstart,$qend,$userId,$zonediff)
 				$row["Id"],$row["Subject"],
 				TimeToJsonTime($row["StartTime"]),
 				TimeToJsonTime($row["EndTime"]),
-				$row["IsAlldayEvent"]?1:0,
+				$row["IsAllDayEvent"]?1:0,
 				TimeToTimeStringFormat($row["StartTime"],"Ymd")==TimeToTimeStringFormat($row["EndTime"],"Ymd")? 0:1,
 				1,
 				$row["Category"]=="1"?1:0,1,$row["Attendees"],$row["Location"]

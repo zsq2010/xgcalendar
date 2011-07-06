@@ -1,5 +1,5 @@
 <?php 
-	include('conf.inc');
+	require('conf.php');
 	
 	function db_connect()
 	{

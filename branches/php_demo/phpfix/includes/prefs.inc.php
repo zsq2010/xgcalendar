@@ -27,8 +27,8 @@ function IsPost()
 function GetCalendarViewFormat($viewType, $showdate)
 {
 	
-	$ret =array();	
-	$date =getdate($showdate);
+	$ret = array();	
+	$date = getdate($showdate);
 	switch ($viewType)
 	{ 
 		case "day": //日
@@ -68,7 +68,7 @@ function GetCalendarViewFormat($viewType, $showdate)
 }
 function GetClientIP()
 {
-	$user_IP = ($_SERVER["HTTP_VIA"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : $_SERVER["REMOTE_ADDR"];
+	$user_IP = (isset($_SERVER["HTTP_VIA"])) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : $_SERVER["REMOTE_ADDR"];
 	$user_IP = ($user_IP) ? $user_IP : $_SERVER["REMOTE_ADDR"];
 	return $user_IP;
 }
@@ -90,6 +90,11 @@ function TimeToJsonTime($time)
 	$datetime = new DateTime($time);
 	return TimestampToJsonTime($datetime->getTimestamp());
 }
+function TimeToTimeStringFormat($time, $format)
+{
+	$datetime = new DateTime($time);
+	return $datetime->format($format);
+}
 function addtime($date,$hours,$minutes,$seconds )
 {
 	 $date->setTimestamp($date->getTimestamp() +$hours*3600+$minutes*60+$seconds);
@@ -107,4 +112,28 @@ function safeparam($str)
 		return str_replace($vowels, "",$str);
 	}
 }
+
+function js2Timestamp($jsdate){
+  if(preg_match('@(\d+)/(\d+)/(\d+)\s+(\d+):(\d+)@', $jsdate, $matches)==1){
+    $ret = mktime($matches[4], $matches[5], 0, $matches[1], $matches[2], $matches[3]);
+  }else if(preg_match('@(\d+)/(\d+)/(\d+)@', $jsdate, $matches)==1){
+    $ret = mktime(0, 0, 0, $matches[1], $matches[2], $matches[3]);
+  }
+  return $ret;
+}
+
+function timestamp2JsTime($phpDate){
+    return date("n/j/Y H:i", $phpDate);
+}
+
+function timestamp2MySqlTime($phpDate){
+    return date("Y-m-d H:i:s", $phpDate);
+}
+
+function mySql2Timestamp($sqlDate){
+    $arr = date_parse($sqlDate);
+    return mktime($arr["hour"],$arr["minute"],$arr["second"],$arr["month"],$arr["day"],$arr["year"]);
+
+}
+
 ?>

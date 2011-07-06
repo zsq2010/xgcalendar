@@ -1,6 +1,6 @@
 ﻿<?php
 
-$default_lang = 'zh-cn';
+$default_lang = 'en-us';
 
 $supported_langs = array("zh-cn","en-au","en-us");
 
@@ -27,7 +27,7 @@ if( getPref('lang') != NULL ) {
 }
   
 if(!isset($lang)) {
-   $lang == 'auto';
+   $lang = 'auto';
 }
 
 //
@@ -53,7 +53,7 @@ if($lang == 'auto') {
   foreach(explode(',', $http_accept_language) as $accept_lang) {
   	$accepted_languages[] = $accept_lang;
   }
-  print_r($accepted_languages);
+  
   foreach($accepted_languages as $curr_lang)
   {
     if( array_search($curr_lang, $supported_langs) !== FALSE ) {

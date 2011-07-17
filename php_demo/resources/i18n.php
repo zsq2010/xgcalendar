@@ -21,7 +21,7 @@ foreach($cookie_names as $cookie_name) {
 //
 // Handle language choice
 //
-
+$lang ="";
 if( getPref('lang') != NULL ) {
 	$lang = getPref('lang');
 }

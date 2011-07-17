@@ -64,3 +64,6 @@ Subsonic 相关问题 http://Subsonicproject.com/
 
 2011-04-28
 27 新增php和python代码示例
+
+2011-07-17
+28 修正了php_demo的几个bug

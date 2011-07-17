@@ -45,14 +45,14 @@ function QuickAdd()
 	$clientzone = getPref('timezone');
 	$serverzone= TIMEZONE_INDEX;
 	$zonediff = $serverzone-$clientzone ; 
-	$start_date = DateTime::createFromFormat(msg(datestring)." H:i",$strStartTime);
+	$start_date = DateTime::createFromFormat(msg("datestring")." H:i",$strStartTime);
 	if ($start_date==null) {
 		$ret["IsSuccess"] =false;
 		$ret["Msg"] =msg("notvoliddatetimeformat").":".$strStartTime;
 		echo json_encode($ret); 
 		return;
 	}
-	$end_date = DateTime::createFromFormat(msg(datestring)." H:i",$strEndTime);
+	$end_date = DateTime::createFromFormat(msg("datestring")." H:i",$strEndTime);
 	if ($end_date==null) {
 		$ret["IsSuccess"] =false;
 		$ret["Msg"] =msg("notvoliddatetimeformat").":".$strEndTime;
@@ -68,7 +68,7 @@ function QuickAdd()
 		"Subject" => $subject,
 		"StartTime" => addtime($start_date,$zonediff,0,0),
 		"EndTime" => addtime($end_date,$zonediff,0,0),
-		"IsAllDayEvent" => isallday == "1"?1:0,
+		"IsAllDayEvent" => $isallday == "1"?1:0,
 		"UPAccount" => GetClientIP(),
 		"UPName" => msg("admin"),
 		"UPTime" => new DateTime(),

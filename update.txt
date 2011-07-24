@@ -67,3 +67,6 @@ Subsonic 相关问题 http://Subsonicproject.com/
 
 2011-07-17
 28 修正了php_demo的几个bug
+
+2011-07-24
+29 修正了在只读模式下，月视图点击日期不能跳转到日视图的问题

@@ -838,7 +838,7 @@
 
                 //title tr
                 htb.push("<tr>");
-                var titletemp = "<td class=\"st-dtitle${titleClass}\" ch='qkadd' abbr='${abbr}' axis='00:00' title=\"${title}\"><span class='monthdayshow'>${dayshow}</span></a></td>";
+                var titletemp = "<td class=\"st-dtitle${titleClass}\" ch='qkadd' abbr='${abbr}' axis='00:00' title=\"${title}\"><span class='monthdayshow'>${dayshow}</span></td>";
 
                 for (var i = 0; i < 7; i++) {
                     var o = { titleClass: "", dayshow: "" };
@@ -2009,6 +2009,12 @@
                 if (option.readonly == false) {
                     $("#mvEventContainer").mousedown(function(e) { dragStart.call(this, "m1", e); return false; });
                 }
+				else
+				{
+					 $("#mvEventContainer span.monthdayshow").each(function(e){
+						$(this).click(function(e2){    weekormonthtoday.call($(this).parent()[0], e2); });
+					 });
+				}
             }
 
         }

@@ -267,7 +267,9 @@
             //点击新增日程
             $("#faddbtn").click(function(e) {
                 var url ="<%=Url.Action("EditCalendar")%>";
-                OpenModelWindow(url,{ width: 500, height: 400, caption: "<%=Html.Resource("lang,addcalendar")%>"});
+                OpenModelWindow(url,{ width: 500, height: 400, caption: "<%=Html.Resource("lang,addcalendar")%>",onclose:function(){
+                       $("#gridcontainer").BCalReload();
+                    }});
             });
             //点击回到今天
             $("#showtodaybtn").click(function(e) {

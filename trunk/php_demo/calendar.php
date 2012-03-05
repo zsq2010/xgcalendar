@@ -1,10 +1,10 @@
 <?php
+ob_start();
 header("Content-type:application/json; charset=utf-8"); 
 require_once('includes/prefs.inc.php');
 require_once('includes/db.php');
 require_once('resources/i18n.php');
-
-
+ob_end_flush();
 if( IsPost() ) // 如果是post提交数据
 {
 	
